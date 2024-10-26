@@ -15,9 +15,9 @@ export default {
       },
       fontFamily: {
         // Para usar la fuente Kantumruy Pro por defecto
-        sans: ["Kantumruy Pro", "Inter", "ui-sans-serif"],
+        sans: ["Kantumruy Pro", "Inter"],
         // Para usar la fuente Kantumruy Pro en un componente específico
-        // 'kantumruy': ['Kantumruy Pro', 'ui-sans-serif'],
+        // 'kantumruy': ['Kantumruy Pro'],
       },
     },
   },

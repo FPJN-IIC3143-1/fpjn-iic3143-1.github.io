@@ -109,7 +109,8 @@ export default function DietaryPreferences() {
 
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
         
-        <h1 className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tu decides ... <span className="text-7xl font-extralight">Preferencias Alimenticias</span></h1>
+        <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tu decides ...</div>
+        <div className="text-7xl text-[#182F40] font-extralight">Preferencias Alimenticias</div>
 
         <div className='flex grow flex-shrink-0 justify-evenly mt-[120px]'>
           <div className='flex flex-col'>
