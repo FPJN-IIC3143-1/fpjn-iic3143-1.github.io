@@ -6,7 +6,10 @@ export default function NotificationLogOut() {
 
 
   const handleNotification = () => {
+    // TODO: Show notifications
     console.log("Notification")
+    // navigate("./notifications")
+    
   }
 
   return(
