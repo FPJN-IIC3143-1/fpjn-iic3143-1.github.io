@@ -1,6 +1,3 @@
-
-
-
 export default function DataCard({boxWidth, leftRowInfo, rightRowInfo}) {
 
     return (
@@ -23,6 +20,9 @@ export default function DataCard({boxWidth, leftRowInfo, rightRowInfo}) {
           ))}
         </div>
       </div>
+      <div className="h-[20px]"></div>
+      
+    </div>
     )
 
 

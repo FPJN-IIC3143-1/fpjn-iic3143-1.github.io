@@ -1,20 +1,15 @@
-import { useNavigate } from "@remix-run/react"
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function NotificationLogOut() {
 
-  const navigate = useNavigate()
+  const { logout } = useAuth0();
+
 
   const handleNotification = () => {
     // TODO: Show notifications
     console.log("Notification")
     // navigate("./notifications")
     
-  }
-
-  const handleLogOut = () => {
-    // TODO: Log out user
-    console.log("LogOut")
-    navigate("/")
   }
 
   return(
@@ -30,7 +25,7 @@ export default function NotificationLogOut() {
         />
       </button>
       <button className="LogOutButton flex justify-center items-center w-[40px] h=[50px] rounded-[8px] hover:border-white hover:border hover:border-solid border-none" 
-        onClick={handleLogOut}
+        onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
       >
         <img src="/NotificationLogOut/logout.png" 
           alt="logOut" 
