@@ -1,6 +1,7 @@
 export default function DataCard({boxWidth, leftRowInfo, rightRowInfo}) {
 
     return (
+      <>
       <div className="container bg-[#A3BE8C] flex justify-center items-center h-[170px] rounded-[20px] text-[#182F40]"
             style={{ width: boxWidth }}>
         
@@ -22,8 +23,6 @@ export default function DataCard({boxWidth, leftRowInfo, rightRowInfo}) {
       </div>
       <div className="h-[20px]"></div>
       
-    </div>
+      </>
     )
-
-
 }
