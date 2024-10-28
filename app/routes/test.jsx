@@ -1,7 +1,8 @@
-import LandingButton from "../components/landingButton"
-import RecipeCard from "../components/recipeCard"
-import DataCard from "../components/dataCard"
+import LandingButton from "../components/landingButton";
+import RecipeCard from "../components/recipeCard";
+import DataCard from "../components/dataCard";
 import NotificationLogOut from "../components/notificationLogOut";
+import WelcomePopUp from "../components/welcomePopUp"; // Asegúrate de que la ruta sea correcta
 
 export default function TestPage() { 
     // This is a test page to see if the components are working correctly
@@ -11,6 +12,8 @@ export default function TestPage() {
             <h2>Notification Log Out</h2>
             <text>     Ahora el cuadro se ubica arriba a la derecha.</text>
             <NotificationLogOut />
+            <h2>Welcome PopUp</h2>
+            <WelcomePopUp />
             <h2>Landing Button</h2>
             <LandingButton bgColor={"#381E72"} textColor={"#D0BCFE"} boxWidth={"200px"} text={"Click Me!"} />
             <h2>Recipe Card</h2>

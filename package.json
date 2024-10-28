@@ -18,6 +18,7 @@
     "isbot": "^4.1.0",
     "jose": "^5.9.4",
     "react": "^19.0.0-rc-e4953922-20240919",
+    "react-credit-cards-2": "^1.0.3",
     "react-dom": "^19.0.0-rc-e4953922-20240919",
     "react-router-dom": "^6.26.2",
     "vite-plugin-pwa": "^0.20.5"
