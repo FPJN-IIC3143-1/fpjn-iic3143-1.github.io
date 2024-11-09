@@ -56,7 +56,7 @@ export default function DietaryPreferences() {
       return { ...prevRestrictions, intolerances: updatedIntolerances };
     });
   };
-  
+
   useEffect(() => { 
     if (!isAuthenticated) {
       loginWithRedirect();
@@ -117,12 +117,20 @@ export default function DietaryPreferences() {
       });
   };
 
+  const macroLabels = {
+    protein: "Proteína",
+    carbs: "Carbohidratos",
+    fats: "Grasas",
+    calories: "Calorías"
+  };
+
+
   return (
     <div className="GeneralContainer flex">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] pl-[100px] z-[0]">
-        <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tu decides ...</div>
+        <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tú decides...</div>
         <div className="text-7xl text-[#182F40] font-extralight">Preferencias Alimenticias</div>
 
         <div className='TopHorizontalContainer flex grow flex-shrink-0 justify-around mt-[100px] flex-wrap'>
@@ -138,10 +146,10 @@ export default function DietaryPreferences() {
           <div className="flex flex-col items-center">
             <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios</div>
             <div className="MacrosFields flex flex-col text-xl text-[#182F40] mb-[40px]">
-              {["protein", "carbs", "fats", "calories"].map((macro) => (
+              {Object.keys(macroGoals).map((macro) => (
                 <div key={macro} className="MacroFieldContainer flex items-center justify-between w-[250px] mb-[10px]">
                   <div className="MacroFieldLabel text-[#182F40] capitalize">
-                    {macro === "carbs" ? "Carbohidratos" : macro.charAt(0).toUpperCase() + macro.slice(1)}
+                    {macroLabels[macro]}
                   </div>
                   {isEditingMacros ? (
                     <input
@@ -154,7 +162,7 @@ export default function DietaryPreferences() {
                     />
                   ) : (
                     <div className="MacroFieldValue text-lg font-bold">
-                      {macroGoals[macro]}g
+                      {macro === "calories" ? `${macroGoals[macro]} kcal` : `${macroGoals[macro]}g`}
                     </div>
                   )}
                 </div>
@@ -163,7 +171,7 @@ export default function DietaryPreferences() {
             <PurpleButton text={isEditingMacros ? "Guardar objetivos" : "Editar objetivos"} onClick={saveMacroGoalsAndResetView} />
           </div>
 
-          {/* Dietary Restrictions */}
+          {/* Restricciones Alimentarias */}
           <div className="flex flex-col items-center">
             <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Restricciones alimentarias</h3>
             <div className="flex flex-col text-[#182F40] space-y-4">
