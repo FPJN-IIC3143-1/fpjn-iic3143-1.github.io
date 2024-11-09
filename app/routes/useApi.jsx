@@ -9,6 +9,11 @@ export default function useApi() {
     const tokenRef = useRef();
     const [tokenReady, setTokenReady] = useState(false);
 
+    const handleTokenReady = () => {
+        setTokenReady(true);
+        console.log("Token ready");
+    }
+
     useEffect(() => {
         const generateToken = async () => {
             try {
@@ -18,7 +23,7 @@ export default function useApi() {
                     .setExpirationTime('2h')
                     .sign(secretKey);
                 tokenRef.current = token;
-                setTokenReady(true);
+                handleTokenReady();
                 console.log("Token generated:", token);
             } catch (err) {
                 console.error("Token generation error: ", err);
@@ -58,15 +63,15 @@ export default function useApi() {
         }
     };
 
+    const getDailyGoal = async () => {
+        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
+        return await apiCall(url, 'GET');
+    };
+
     const setDailyGoal = async ({ protein, carbs, fats, calories }) => {
         const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
         const dailyGoal = { protein: String(protein), carbs: String(carbs), fats: String(fats), calories: String(calories) };
         return await apiCall(url, 'POST', dailyGoal);
-    };
-
-    const getDailyGoal = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
-        return await apiCall(url, 'GET');
     };
 
     const getPreferences = async () => {

@@ -18,6 +18,13 @@ export default function DietaryPreferences() {
   }
 
   // toDO: esto debe ser una consulta a back!
+  const [macroGoals, setMacroGoals] = useState({
+    protein: 0,
+    fats: 0,
+    carbs: 0,
+    calories: 0,
+  });
+
   const [restrictions, setRestrictions] = useState({
     celiac: false,
     lactoseIntolerant: true,
@@ -25,22 +32,30 @@ export default function DietaryPreferences() {
     vegetarian: false,
   });
 
-  // toDO: esto debe ser una consulta a back!
-  const [macroGoals, setMacroGoals] = useState({
-    protein: 100,
-    fats: 0,
-    carbs: 0,
-    calories: 0,
-  });
-
-  useEffect(() => {
+  const handleMacroChange = (goalData) => {
+    console.log("Goal data:", goalData);
+    setMacroGoals({
+      protein: goalData.goal.protein,
+      fats: goalData.goal.fats,
+      carbs: goalData.goal.carbs,
+      calories: goalData.goal.calories,
+    })
+  }
+  
+  useEffect(() => { // call the api to get the user's preferences and daily goals
+    console.log("Use Effect:");
     if (!isAuthenticated) {
       loginWithRedirect();
+      console.log("No autenticado:");
     } else if (api.tokenReady) {
+      console.log("Autenticado");
+
+
       api.getRecipes().then((recipes) => {
         console.log("Recipes:", recipes);
       });
-  
+      
+      // CUÁL ES EL VALOR DE ESTO??
       api.getPreferences().then(preferences => {
         if (preferences) {
           setRestrictions({
@@ -55,12 +70,9 @@ export default function DietaryPreferences() {
       // Fetch daily goals and set state
       api.getDailyGoal().then(goalData => {
         if (goalData && goalData.goal) {
-          setMacroGoals({
-            protein: goalData.goal.protein,
-            fats: goalData.goal.fats,
-            carbs: goalData.goal.carbs,
-            calories: goalData.goal.calories,
-          });
+          handleMacroChange(goalData);
+          // NUNCA SE EJECUTA!
+          console.log("Daily goal data:", goalData);
         }
       });
     }
@@ -68,7 +80,6 @@ export default function DietaryPreferences() {
 
 
   const saveMacroGoalsAndResetView = () => {
-
     // 1. Send the new macro goals to the backend
     api.setDailyGoal(macroGoals)
       .then(response => {
@@ -81,12 +92,19 @@ export default function DietaryPreferences() {
       .catch(error => {
         alert("Error al guardar los objetivos: " + error.message);
       });
-
     // 2. Reset the view
     setEditingMacros();
   };
 
 
+  // Toggle restriction based on key
+  const handleCheckboxChange = (key) => {
+    setRestrictions((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+  
   const savePreferences = () => {
     const selectedDiet = Object.keys(restrictions).find(key => restrictions[key] === true) || '';
     const intolerances = Object.keys(restrictions).filter(key => restrictions[key] === true);
@@ -104,13 +122,6 @@ export default function DietaryPreferences() {
       });
   };
 
-  // Toggle restriction based on key
-  const handleCheckboxChange = (key) => {
-    setRestrictions((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
 
   
   return ( 
