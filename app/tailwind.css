@@ -13,6 +13,11 @@ body {
   }
 }
 
+/* --- Input (Macros, dietary-preferences: hide the built-in buttons --- */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /* --- Protein Slider: cambia color thumb del slider --- */
 input[type='range']::-webkit-slider-thumb {
   @apply bg-[#182F40] w-[15px] h-[15px] active:bg-[#D0BCFE] border-none;

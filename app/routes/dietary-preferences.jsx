@@ -7,15 +7,17 @@ import { useAuth0 } from '@auth0/auth0-react';
 import useApi from './useApi';
 
 
-// ToDo: Layout general es INCORRECTO
-/* ToDO: pensar mejor esta vista!! está raro el flujo de edición para obj macros*/
-
-
 export default function DietaryPreferences() { 
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const api = useApi();
 
-  // State to manage dietary restrictions and macro goals
+  const [isEditingMacros, setIsEditingMacros] = useState(false);
+
+  const setEditingMacros = () => {
+    setIsEditingMacros(!isEditingMacros);
+  }
+
+  // toDO: esto debe ser una consulta a back!
   const [restrictions, setRestrictions] = useState({
     celiac: false,
     lactoseIntolerant: true,
@@ -23,8 +25,9 @@ export default function DietaryPreferences() {
     vegetarian: false,
   });
 
+  // toDO: esto debe ser una consulta a back!
   const [macroGoals, setMacroGoals] = useState({
-    protein: 0,
+    protein: 100,
     fats: 0,
     carbs: 0,
     calories: 0,
@@ -63,8 +66,10 @@ export default function DietaryPreferences() {
     }
   }, [isAuthenticated, loginWithRedirect, api]);
 
-  // Function to handle saving macro goals
-  const saveMacroGoals = () => {
+
+  const saveMacroGoalsAndResetView = () => {
+
+    // 1. Send the new macro goals to the backend
     api.setDailyGoal(macroGoals)
       .then(response => {
         if (response?.message && response.message.toLowerCase().includes("successfully")) {
@@ -76,7 +81,12 @@ export default function DietaryPreferences() {
       .catch(error => {
         alert("Error al guardar los objetivos: " + error.message);
       });
+
+    // 2. Reset the view
+    setEditingMacros();
   };
+
+
   const savePreferences = () => {
     const selectedDiet = Object.keys(restrictions).find(key => restrictions[key] === true) || '';
     const intolerances = Object.keys(restrictions).filter(key => restrictions[key] === true);
@@ -104,15 +114,15 @@ export default function DietaryPreferences() {
 
   
   return ( 
-    <div className="generalContainer flex">
+    <div className="GeneralContainer flex">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
-      <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
+      <div className="Container relative h-screen grow bg-[#E5E9F0] p-[60px] z-[0]">
         
         <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tu decides ...</div>
         <div className="text-7xl text-[#182F40] font-extralight">Preferencias Alimenticias</div>
 
-        <div className='flex grow flex-shrink-0 justify-evenly mt-[120px]'>
+        <div className='TopHorizontalContainer flex grow flex-shrink-0 justify-evenly mt-[120px]'>
           <div className='flex flex-col'>
             <h3 className="text-3xl font-bold text-[#182F40] mb-[30px]">Bloquear alimentos</h3>
             <SearchBar/>
@@ -122,44 +132,33 @@ export default function DietaryPreferences() {
           </div>
         </div>
 
-        {/* Macronutrient Goals */}
-        <div className="macrosContainer flex justify-around mt-[60px]">
+        <div className="BottomHorizontalContainer flex justify-around mt-[60px]">
+          {/* Macronutrient Goals */}
           <div className="flex flex-col items-center">
-            <div className="text-3xl font-bold text-[#182F40] ">Objetivos macronutricionales</div>
-            <div className="text-3xl text-[#182F40] mb-[30px]">Diarios</div>
+            <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios (en gramos)</div>
+            <div className="MacrosFields flex flex-col text-xl text-[#182F40] mb-[40px]">
 
-            {/* ToDO: pensar mejor esta vista!! está raro el flujo de edición */}
-            <div className="flex flex-col text-xl text-[#182F40]">
-              <div className="ProteinField flex items-center justify-between w-[240px] ">
-                <div className='inputField and its unit'>
+              <div className="ProteinFieldContainer flex items-center justify-between w-[200px] ">
+              { isEditingMacros ?
                   <input  
-                    type="number" 
+                    type="number"
+                    min="0" 
                     value={macroGoals.protein} 
-                    onChange={(e) => setMacroGoals({ ...macroGoals, protein: Number(e.target.value) })} 
-                    className="w-[100px] pt-[3px] pb-[5px] border rounded text-right"
-                    /> g
-                </div>
-                <div className="text-[#182F40]">Proteína</div>
+                    onChange={(userInput) => setMacroGoals({ ...macroGoals, protein: Number(userInput.target.value) })} 
+                    className="w-[80px] pt-[5px] pb-[7px] pr-[10px] rounded-[10px] text-right text-lg bg-[#ffffff]
+                    focus:outline-none focus:shadow-lg focus:bg-[#D0BCFE] hover:bg-[#D0BCFE]"
+                    />
+                    :
+                    <div className="ProteinValue text-lg text-[#182F40] font-bold"> {macroGoals.protein}g</div>
+                  }
+                <div className="ProteinFieldText text-[#182F40]">Proteína</div>
               </div>
-
-              <div className="FatField flex items-center justify-between w-[240px] ">
-                <div className='inputField and its unit'>
-                  <input  
-                    type="number" 
-                    value={macroGoals.protein} 
-                    onChange={(e) => setMacroGoals({ ...macroGoals, protein: Number(e.target.value) })} 
-                    className="w-[100px] pt-[3px] pb-[5px] border rounded text-right"
-                    /> g
-                </div>
-                <div className="text-[#182F40]">Grasa</div>
-
-                {/* FALTA CARBOHIDRATOS Y CALORÍAS */}
-              </div>
-
             </div>
-
-            <div className="h-[40px]"></div>
-            <PurpleButton text="Guardar objetivos" onClick={saveMacroGoals}/>
+            { isEditingMacros ?
+            <PurpleButton text="Guardar objetivos" onClick={saveMacroGoalsAndResetView}/>
+            : 
+            <PurpleButton text="Editar objetivos" onClick={setEditingMacros}/>
+            }
           </div>
 
 
@@ -179,7 +178,7 @@ export default function DietaryPreferences() {
                     checked={restrictions[restriction.key]}
                     onChange={() => handleCheckboxChange(restriction.key)}
                     className="mr-[20px] w-[30px] h-[30px] rounded-full cursor-pointer appearance-none 
-                              checked:bg-[#5B467C] relative"
+                              checked:bg-[#5B467C] bg-[#D0BCFE] relative"
                     style={{
                       backgroundColor: restrictions[restriction.key] ? '#5B467C' : '#E7E7E7',
                     }}
