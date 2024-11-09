@@ -1,37 +1,7 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { SignJWT } from 'jose';
-import { useEffect, useRef, useState } from 'react';
-
-const secretKey = new TextEncoder().encode('-KJGzSyN_xPJFu058EIb-fTvEkFCna1QLdbERahXMMxKRJprkB4ig31ZL8klEWJl');
+import { TokenProvider, useToken } from './tokenContext';
 
 export default function useApi() {
-    const { user } = useAuth0();
-    const tokenRef = useRef();
-    const [tokenReady, setTokenReady] = useState(false);
-
-    const handleTokenReady = () => {
-        setTokenReady(true);
-        console.log("Token ready");
-    }
-
-    useEffect(() => {
-        const generateToken = async () => {
-            try {
-                const token = await new SignJWT({ email: user?.email || "email@email.com" })
-                    .setProtectedHeader({ alg: 'HS256' })
-                    .setIssuedAt()
-                    .setExpirationTime('2h')
-                    .sign(secretKey);
-                tokenRef.current = token;
-                handleTokenReady();
-                console.log("Token generated:", token);
-            } catch (err) {
-                console.error("Token generation error: ", err);
-            }
-        };
-
-        generateToken();
-    }, [user]);
+    const { token, tokenReady } = useToken();
 
     const apiCall = async (url, method, body = null) => {
         if (!tokenReady) {
@@ -40,7 +10,7 @@ export default function useApi() {
         }
 
         const headers = {
-            'Authorization': `Bearer ${tokenRef.current}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
 
@@ -81,7 +51,7 @@ export default function useApi() {
 
     const setPreferences = async ({ diet, intolerances }) => {
         const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/preferences";
-        const preferences = { diet, intolerances: intolerances.join(',') };
+        const preferences = { diet, intolerances };
         return await apiCall(url, 'POST', preferences);
     };
 

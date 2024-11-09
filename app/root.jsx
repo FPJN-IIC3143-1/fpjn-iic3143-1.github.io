@@ -8,6 +8,7 @@ import {
 
 import "./tailwind.css";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { TokenProvider } from './routes/tokenContext';
 
 export const links = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,24 +23,6 @@ export const links = () => [
   },
 ];
 
-export function Layout({ children }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 export default function App() {
   return (
     <Auth0Provider
@@ -48,12 +31,22 @@ export default function App() {
       authorizationParams={{
         redirect_uri: import.meta.env.VITE_REDIRECT_URI,
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-        scope: "openid profile email"
+        scope: "openid profile email",
       }}
     >
-      <Layout>
-        <Outlet />
-      </Layout>
+      <TokenProvider>
+        <html lang="en">
+          <head>
+            <Meta />
+            <Links />
+          </head>
+          <body>
+            <Outlet />
+            <ScrollRestoration />
+            <Scripts />
+          </body>
+        </html>
+      </TokenProvider>
     </Auth0Provider>
   );
 }
