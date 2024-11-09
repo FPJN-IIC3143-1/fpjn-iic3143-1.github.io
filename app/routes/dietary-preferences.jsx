@@ -117,7 +117,7 @@ export default function DietaryPreferences() {
     <div className="GeneralContainer flex">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
-      <div className="Container relative h-screen grow bg-[#E5E9F0] p-[60px] z-[0]">
+      <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
         
         <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tu decides ...</div>
         <div className="text-7xl text-[#182F40] font-extralight">Preferencias Alimenticias</div>
@@ -135,19 +135,22 @@ export default function DietaryPreferences() {
         <div className="BottomHorizontalContainer flex justify-around mt-[60px]">
           {/* Macronutrient Goals */}
           <div className="flex flex-col items-center">
-            <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios (en gramos)</div>
+            <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios</div>
             <div className="MacrosFields flex flex-col text-xl text-[#182F40] mb-[40px]">
 
               <div className="ProteinFieldContainer flex items-center justify-between w-[200px] ">
               { isEditingMacros ?
-                  <input  
-                    type="number"
-                    min="0" 
-                    value={macroGoals.protein} 
-                    onChange={(userInput) => setMacroGoals({ ...macroGoals, protein: Number(userInput.target.value) })} 
-                    className="w-[80px] pt-[5px] pb-[7px] pr-[10px] rounded-[10px] text-right text-lg bg-[#ffffff]
-                    focus:outline-none focus:shadow-lg focus:bg-[#D0BCFE] hover:bg-[#D0BCFE]"
-                    />
+                    <div className="flex">
+                      <input  
+                        type="number"
+                        min="0" 
+                        value={macroGoals.protein} 
+                        onChange={(userInput) => setMacroGoals({ ...macroGoals, protein: Number(userInput.target.value) })} 
+                        className="w-[80px] pt-[5px] pb-[7px] pr-[10px] rounded-[10px] text-right text-lg bg-[#ffffff]
+                        focus:outline-none focus:shadow-lg focus:bg-[#D0BCFE] hover:bg-[#D0BCFE]"
+                        />
+                        <div className="mt-[6px] ml-[5px]">g</div>
+                    </div>
                     :
                     <div className="ProteinValue text-lg text-[#182F40] font-bold"> {macroGoals.protein}g</div>
                   }
