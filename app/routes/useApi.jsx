@@ -1,5 +1,7 @@
 import { TokenProvider, useToken } from './tokenContext';
 
+const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
+
 export default function useApi() {
     const { token, tokenReady } = useToken();
 
@@ -21,7 +23,7 @@ export default function useApi() {
         };
 
         try {
-            const response = await fetch(url, options);
+            const response = await fetch(`${BASE_URL}${url}`, options);
             if (!response.ok) {
                 const errorMsg = await response.text();
                 throw new Error(`Request failed: ${response.status} - ${errorMsg}`);
@@ -34,30 +36,35 @@ export default function useApi() {
     };
 
     const getDailyGoal = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
-        return await apiCall(url, 'GET');
+        return await apiCall('/nutrition/dailyGoal', 'GET');
     };
 
     const setDailyGoal = async ({ protein, carbs, fats, calories }) => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
         const dailyGoal = { protein: String(protein), carbs: String(carbs), fats: String(fats), calories: String(calories) };
-        return await apiCall(url, 'POST', dailyGoal);
+        return await apiCall('/nutrition/dailyGoal', 'POST', dailyGoal);
     };
 
     const getPreferences = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/preferences";
-        return await apiCall(url, 'GET');
+        return await apiCall('/preferences', 'GET');
     };
 
     const setPreferences = async ({ diet, intolerances }) => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/preferences";
         const preferences = { diet, intolerances };
-        return await apiCall(url, 'POST', preferences);
+        return await apiCall('/preferences', 'POST', preferences);
     };
 
     const getRecipes = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/recipes";
-        return await apiCall(url, 'GET');
+        return await apiCall('/recipes', 'GET');
+    };
+
+    const transbankPayment = async () => {
+        const body = { returnUrl: "https://myapp.com/payment/success" };
+        const response = await apiCall('/payment', 'POST', body);
+        return response.redirect; 
+    };
+
+    const checkPaymentStatus = async (token_ws) => {
+        return await apiCall(`/payment/status?token_ws=${token_ws}`, 'GET');
     };
 
     return {
@@ -65,6 +72,8 @@ export default function useApi() {
         getDailyGoal,
         getPreferences,
         setPreferences,
-        getRecipes
+        getRecipes,
+        transbankPayment,
+        checkPaymentStatus
     };
 }
