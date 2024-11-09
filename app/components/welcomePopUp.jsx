@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import CreditCardInput from './creditCardInput'; // Asegúrate de que la ruta sea correcta
+import CreditCardInput from './creditCardInput'; 
 
 export default function WelcomePopUp() {
+  // WelcomePopUp Component with a form to collect user's name, last name and credit card information
+      // The form works for any screen size and should have the following fields:
   const userEmail = "mealsbuddy@gmail.com"; // TODO: Replace with the actual user's email
   const [isVisible, setIsVisible] = useState(true);
   const [name, setName] = useState('');
