@@ -128,22 +128,22 @@ export default function DietaryPreferences() {
     <div className="GeneralContainer flex">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
-      <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
+      <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] pl-[100px] z-[0]">
         
         <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tu decides ...</div>
         <div className="text-7xl text-[#182F40] font-extralight">Preferencias Alimenticias</div>
 
-        <div className='TopHorizontalContainer flex grow flex-shrink-0 justify-evenly mt-[120px]'>
+        <div className='TopHorizontalContainer flex grow flex-shrink-0 justify-around mt-[100px] flex-wrap'>
           <div className='flex flex-col'>
             <h3 className="text-3xl font-bold text-[#182F40] mb-[30px]">Bloquear alimentos</h3>
             <SearchBar/>
-            </div>
-            <div className="w-[340px] pl-[30px] text-2xl text-[#182F40] mt-[20px]">
+          </div>
+          <div className="w-[340px] pl-[30px] text-2xl text-[#182F40] mt-[20px] ">
             Busca un <span className="font-bold">alimento que no te guste</span> y no lo incluiremos en tus recetas
           </div>
         </div>
 
-        <div className="BottomHorizontalContainer flex justify-around mt-[60px]">
+        <div className="BottomHorizontalContainer flex justify-evenly mt-[80px] flex-wrap">
           {/* Macronutrient Goals */}
           <div className="flex flex-col items-center">
             <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios</div>
@@ -186,15 +186,14 @@ export default function DietaryPreferences() {
                 { label: "Vegano/a", key: "vegan" },
                 { label: "Vegetariano/a", key: "vegetarian" },
               ].map((restriction) => (
-                <div key={restriction.key} className="flex items-center text-2xl mb-[15px]">
+                <div key={restriction.key} className="flex items-center text-xl mb-[15px]">
                   <input
                     type="checkbox"
                     checked={restrictions[restriction.key]}
                     onChange={() => handleCheckboxChange(restriction.key)}
-                    className="mr-[20px] w-[30px] h-[30px] rounded-full cursor-pointer appearance-none 
-                              checked:bg-[#5B467C] bg-[#D0BCFE] relative"
+                    className="mr-[20px] w-[30px] h-[30px] rounded-full cursor-pointer appearance-none relative"
                     style={{
-                      backgroundColor: restrictions[restriction.key] ? '#5B467C' : '#E7E7E7',
+                      backgroundColor: restrictions[restriction.key] ? '#5B467C' : '#D0BCFE',
                     }}
                   />
                   <label>{restriction.label}</label>
@@ -208,7 +207,7 @@ export default function DietaryPreferences() {
         </div>
 
         {/* Decorative Background and Logo */}
-        <img src="/images/ellipse-background.png" alt="decorative ellipse" className="absolute top-[50%] left-[50%] z-[-1]" />
+        <img src="/images/ellipse-left-background.png" alt="decorative ellipse" className="absolute top-[75%] left-[-7%] z-[-1]" />
         <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />
       </div>
 
