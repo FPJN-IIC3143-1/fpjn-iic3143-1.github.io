@@ -18,7 +18,7 @@ export default function History() {
     <div className="flex">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
-      <div className="relative h-screen grow bg-[#E5E9F0] p-10 z-[0]">
+      <div className="relative h-[1100px] grow bg-[#E5E9F0] p-10 z-[0]">
         
         {/* Page Header */}
         <h1 className="text-3xl text-[#182F40] font-bold">Tus secretos solo conocidos por los ... <span className="text-7xl font-extralight">Historiales</span></h1>
@@ -81,11 +81,10 @@ export default function History() {
 
 
         {/* Decorative Background */}
-        {/* <img src="/images/ellipse-background.png" alt="decorative ellipse" className="absolute top-[-10%] left-[-5%] w-1/4 z-[-1] opacity-40" /> */}
+        {/* <img src="/images/ellipse-background.png" alt="decorative ellipse" className="absolute top-[-10%] left-[-5%] w-1/4 z-[-10]" /> */}
         
         {/* Logo */}
-        <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-5 right-5 w-20 h-20 " />
-      </div>
+        <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />      </div>
       <NotificationLogOut/>
     </div>
   );

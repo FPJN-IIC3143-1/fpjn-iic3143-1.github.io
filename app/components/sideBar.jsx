@@ -94,7 +94,7 @@ export default function SideBar({ userName }) {
         className="FoodRestrictions-text mt-[25px] text-white" 
         onMouseEnter={mouseEnteranimation} 
         onMouseLeave={mouseLeaveanimation}
-        onClick={() => navigate("/dietary_preferences", {replace: true})}
+        onClick={() => navigate("/dietary-preferences", {replace: true})}
       >
         Preferencias Alimenticias
       </button>
@@ -118,7 +118,7 @@ export default function SideBar({ userName }) {
 
       <div className="FooterSideBar flex flex-col w-[235px] items-center mt-5 text-white">
         <button 
-        className="FoodRestrictions-text mt-[25px] mb-[30px] text-white" 
+        className="FoodRestrictions-text mt-[25px] mb-[20px] text-white" 
         onMouseEnter={mouseEnteranimation} 
         onMouseLeave={mouseLeaveanimation}
         onClick={() => navigate("/homepage", {replace: true})}

@@ -40,7 +40,7 @@ export default function Pantry() {
     <div className="generalContainer flex">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
-      <div className="Container relative h-screen grow bg-[#E5E9F0] p-[60px] z-[0]">
+      <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
 
         <h1 className="text-2xl font-bold text-[#182F40] tracking-wider leading-tight mb-2">Qué hay hoy en tu ...</h1>
         
@@ -92,8 +92,9 @@ export default function Pantry() {
 
         </div>
 
-        {/* Background Shapes */}
+        {/* Background Shapes and Logo */}
         <img src="/images/ellipse-background.png" alt="decorative ellipse" className="absolute top-[50%] left-[50%] z-[-1]" />
+        <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />
         <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />
         
         <NotificationLogOut />
