@@ -58,7 +58,7 @@ export default function useApi() {
     };
 
     const transbankPayment = async () => {
-        const body = { returnUrl: "https://myapp.com/payment/success" };
+        const body = { returnUrl: "https://fpjn-iic3143-1-github-io.vercel.app/homepage" };
         const response = await apiCall('/payment', 'POST', body);
         return response.redirect; 
     };
