@@ -8,7 +8,7 @@ const secretKey = new TextEncoder().encode('-KJGzSyN_xPJFu058EIb-fTvEkFCna1QLdbE
 
 export const TokenProvider = ({ children }) => {
     const { user, isAuthenticated } = useAuth0();
-    const [token, setToken] = useState(null);  // Use state directly for the token
+    const [token, setToken] = useState(null);  
     const [tokenReady, setTokenReady] = useState(false);
 
     const generateToken = useCallback(async () => {
@@ -25,8 +25,8 @@ export const TokenProvider = ({ children }) => {
                 .setExpirationTime('2h')
                 .sign(secretKey);
 
-            setToken(generatedToken); // Set the token directly in state
-            setTokenReady(true);  // Ensure tokenReady is set to true
+            setToken(generatedToken); 
+            setTokenReady(true);  
             console.log("JWT Token generated:", generatedToken);
         } catch (error) {
             console.error("Error generating JWT token:", error);
