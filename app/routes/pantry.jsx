@@ -26,6 +26,7 @@ export default function Pantry() {
   }, [isAuthenticated, loginWithRedirect]);
 
 
+  
 
 
   const handleQuantityChange = (id, newQuantity) => {
