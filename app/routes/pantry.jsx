@@ -82,6 +82,7 @@ export default function Pantry() {
                   type="text"
                   placeholder="Cantidad, gramaje o volumen"
                   className="rounded-lg p-2 border border-gray-300 bg-[#F5F5F5] w-full text-center"
+                  onChange={(e) => handleQuantityChange(e.target.value)}
                   required
                 />
               </form>
