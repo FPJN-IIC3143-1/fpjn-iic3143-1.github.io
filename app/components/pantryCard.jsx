@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import React from 'react';
 
-export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo, api, onPantryUpdate}) {
+export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightRowInfo, api, onPantryUpdate, ITEMS_PER_PAGE = 7}) {
   const [currentPage, setCurrentPage] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editedQuantities, setEditedQuantities] = useState([]);
@@ -56,7 +56,6 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo, api, on
     });
   };
 
-  const ITEMS_PER_PAGE = 8;
   const totalItems = leftRowInfo.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
@@ -99,8 +98,8 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo, api, on
   return (
     <div className="generalContainer flex flex-col"
       style={{ width: boxWidth }}>
-      <div className="container bg-[#A3BE8C] flex flex-col rounded-[20px] h-[450px] text-[#182F40]">          
-        <div className="flex justify-center w-full">
+      <div className={`container bg-[#A3BE8C] flex flex-col rounded-[20px] h-[${boxHeight}px] text-[#182F40]`}>          
+        <div className="flex justify-center w-full pb-0 mb-0">
           <h3 className="text-3xl font-bold my-6">Despensa</h3>
         </div>
         <div className="items-container overflow-hidden flex-1 relative">
@@ -108,7 +107,7 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo, api, on
                style={{ transform: `translateX(-${currentPage * 100}%)` }}>
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <div key={pageIndex} 
-                className="flex-none w-full flex justify-center items-start pt-6 px-4" // Changed justify-start to justify-center
+                className="flex-none w-full flex justify-center items-start pt-2 px-4" // Changed justify-start to justify-center
                 style={{ width: boxWidth }}>
                 <div className="flex flex-row justify-center w-full max-w-[80%]"> {/* Added container for centering */}
                 <div className="leftRow flex flex-col items-end font-bold pr-[40px]">
@@ -121,35 +120,35 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo, api, on
                     // eslint-disable-next-line no-unused-vars
                     const [_, unit] = leftInfo.split(' ');
                     return (
-                      <div key={index} className="leftItem mt-[5px] mb-[5px] flex items-center">
+                      <div key={index} className="leftItem h-[28px] mt-[5px] mb-[5px] flex items-center justify-end w-[120px]">
                         <input
                           type="text"
                           value={editedQuantities[actualIndex]?.amount || ''}
                           onChange={(e) => handleQuantityChange(actualIndex, e.target.value)}
-                          className="w-16 text-right p-1 mr-2 rounded border border-gray-300"
+                          className="h-[28px] w-[60px] text-right px-1 mr-2 rounded border border-gray-300 leading-none"
                         />
-                        <span>{unit}</span>
+                        <span className="w-[40px] h-[28px] flex items-center">{unit}</span>
                       </div>
                     );
                   }
                   return (
-                    <div key={index} className="leftItem mt-[5px] mb-[5px]">
+                    <div key={index} className="leftItem h-[28px] mt-[5px] mb-[5px] w-[120px] text-right flex items-center justify-end">
                       {leftInfo}
                     </div>
                   );
                 })}
               </div>
 
-                  <div className="rightRow flex flex-col items-start">
-                    {rightRowInfo.slice(
-                      pageIndex * ITEMS_PER_PAGE,
-                      (pageIndex + 1) * ITEMS_PER_PAGE
-                    ).map((rightInfo, index) => (
-                      <div key={index} className="rightItem mt-[5px] mb-[5px]">
-                        {rightInfo}
-                      </div>
-                    ))}
+              <div className="rightRow flex flex-col items-start">
+                {rightRowInfo.slice(
+                  pageIndex * ITEMS_PER_PAGE,
+                  (pageIndex + 1) * ITEMS_PER_PAGE
+                ).map((rightInfo, index) => (
+                  <div key={index} className="rightItem h-[28px] mt-[5px] mb-[5px] w-[150px] flex items-center">
+                    {rightInfo}
                   </div>
+                ))}
+              </div>
                 </div>
               </div>
             ))}
