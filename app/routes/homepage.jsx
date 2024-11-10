@@ -8,11 +8,71 @@ import {
 
 import SideBar from "../components/sideBar"; 
 import DataCard from "../components/dataCard";
-import PurpleButton from "../components/purpleButton";
+import PantryCard from "../components/pantryCard";
 import NotificationLogOut from "../components/notificationLogOut";
 import useApi from "./useApi";
+import { useState, useEffect } from "react";
+import { useToken } from "./tokenContext";
 
-export default function HomePage() { 
+export default function HomePage() {
+  const [pantryItems, setPantryItems] = useState([]);
+  // Checkear si el usuario está autenticado
+
+  // Usar useApi para traer la data de la despensa
+  const api = useApi();
+  const { tokenReady } = useToken(); 
+  const [dataFetched, setDataFetched] = useState(false);
+
+  const handlePantryChange = (pantryData) => {
+    if (pantryData && pantryData.length > 0) {
+      let ingredients = pantryData[0].ingredients;
+  
+      // Combine duplicate ingredients
+      const combinedIngredients = ingredients.reduce((acc, curr) => {
+        const existingItem = acc.find(item => 
+          item.name.toLowerCase() === curr.name.toLowerCase() && 
+          item.quantity.unit === curr.quantity.unit
+        );
+  
+        if (existingItem) {
+          existingItem.quantity.amount += curr.quantity.amount;
+        } else {
+          acc.push({
+            ...curr,
+            name: curr.name.charAt(0).toUpperCase() + curr.name.slice(1).toLowerCase() // Capitalize first letter
+          });
+        }
+        return acc;
+      }, []);
+  
+      // Sort ingredients alphabetically
+      const sortedIngredients = combinedIngredients.sort((a, b) => 
+        a.name.localeCompare(b.name)
+      );
+  
+      setPantryItems(sortedIngredients);
+    }
+  };
+
+  useEffect(() => { 
+
+    if (tokenReady && !dataFetched) {
+      console.log("Token is ready, fetching data...");
+      
+      Promise.all([api.getPantry()])
+        .then(([pantryData]) => {
+          console.log("Fetched Pantry Data:", pantryData);
+          handlePantryChange(pantryData);
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error.message);
+        });
+
+      setDataFetched(true);
+    }
+  }, [tokenReady, dataFetched]);
+
+
   useApi()
   return ( 
   <div className="generalContainer flex">
@@ -29,17 +89,21 @@ export default function HomePage() {
           <div className="text-3xl text-[#182F40] font-bold pb-[5px]">Macros de hoy</div>
           <DataCard boxWidth={340} leftRowInfo={["80g", "200g", "50g", "2013kcal"]} rightRowInfo={["Proteínas", "Carbohidratos", "Grasas", "Calorías"]} />
           <div className="h-[20px]"></div>
-          <PurpleButton text="Editar Macros"/>
         </div>
-        <div className="pantryBox flex flex-col items-center ">
-          <div className="text-3xl text-[#182F40] font-bold pb-[5px]">Estado despensa</div>
-          <DataCard  boxWidth={340} leftRowInfo={["2", "1L", "500g", "300g"]} rightRowInfo={["Huevos", "Leche Descremada", "Arroz", "Vacuno"]} />
-          <div className="h-[20px]"></div>
-          <PurpleButton text="Editar Despensa"/>
-        </div>
+        <PantryCard 
+          boxWidth={340}
+          boxHeight={350} 
+          leftRowInfo={pantryItems.map((item) => (
+            `${item.quantity.amount} ${item.quantity.unit}`
+          ))}
+          rightRowInfo={pantryItems.map((item) => item.name)}
+          api={api}
+          onPantryUpdate={handlePantryChange}
+          ITEMS_PER_PAGE={5}
+        />
       </div>
 
-        <div className="notificationsBox flex flex-col w-full items-center pt-[150px]">
+        <div className="notificationsBox flex flex-col w-full items-center pt-[10px]">
 
           <div className="flex justify-start w-[830px]">
             <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px]">Últimas notificaciones</div>
