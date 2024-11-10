@@ -1,32 +1,9 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { SignJWT } from 'jose';
-import { useEffect, useRef, useState } from 'react';
+import { TokenProvider, useToken } from './tokenContext';
 
-const secretKey = new TextEncoder().encode('-KJGzSyN_xPJFu058EIb-fTvEkFCna1QLdbERahXMMxKRJprkB4ig31ZL8klEWJl');
+const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
 
 export default function useApi() {
-    const { user } = useAuth0();
-    const tokenRef = useRef();
-    const [tokenReady, setTokenReady] = useState(false);
-
-    useEffect(() => {
-        const generateToken = async () => {
-            try {
-                const token = await new SignJWT({ email: user?.email || "email@email.com" })
-                    .setProtectedHeader({ alg: 'HS256' })
-                    .setIssuedAt()
-                    .setExpirationTime('2h')
-                    .sign(secretKey);
-                tokenRef.current = token;
-                setTokenReady(true);
-                console.log("Token generated:", token);
-            } catch (err) {
-                console.error("Token generation error: ", err);
-            }
-        };
-
-        generateToken();
-    }, [user]);
+    const { token, tokenReady } = useToken();
 
     const apiCall = async (url, method, body = null) => {
         if (!tokenReady) {
@@ -35,7 +12,7 @@ export default function useApi() {
         }
 
         const headers = {
-            'Authorization': `Bearer ${tokenRef.current}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
 
@@ -46,7 +23,7 @@ export default function useApi() {
         };
 
         try {
-            const response = await fetch(url, options);
+            const response = await fetch(`${BASE_URL}${url}`, options);
             if (!response.ok) {
                 const errorMsg = await response.text();
                 throw new Error(`Request failed: ${response.status} - ${errorMsg}`);
@@ -58,38 +35,114 @@ export default function useApi() {
         }
     };
 
-    const setDailyGoal = async ({ protein, carbs, fats, calories }) => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
-        const dailyGoal = { protein: String(protein), carbs: String(carbs), fats: String(fats), calories: String(calories) };
-        return await apiCall(url, 'POST', dailyGoal);
-    };
 
+    // Daily Goals 
     const getDailyGoal = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/nutrition/dailyGoal";
-        return await apiCall(url, 'GET');
+        return await apiCall('/nutrition/dailyGoal', 'GET');
     };
 
+    const setDailyGoal = async ({ protein, carbs, fats, calories }) => {
+        const dailyGoal = { protein: String(protein), carbs: String(carbs), fats: String(fats), calories: String(calories) };
+        return await apiCall('/nutrition/dailyGoal', 'POST', dailyGoal);
+    };
+
+
+     // Preferences
     const getPreferences = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/preferences";
-        return await apiCall(url, 'GET');
+        return await apiCall('/preferences', 'GET');
     };
 
     const setPreferences = async ({ diet, intolerances }) => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/preferences";
-        const preferences = { diet, intolerances: intolerances.join(',') };
-        return await apiCall(url, 'POST', preferences);
+        const preferences = { diet, intolerances };
+        return await apiCall('/preferences', 'POST', preferences);
     };
 
+
+     // Recipes
     const getRecipes = async () => {
-        const url = "https://3pndzfcvne.us-east-1.awsapprunner.com/recipes";
-        return await apiCall(url, 'GET');
+        return await apiCall('/recipes', 'GET');
     };
+
+    const getRecipeInformation = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/info`, 'GET');
+    }
+    
+    const getRecipeNutrition = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
+    }
+    
+    const registerRecipeConsumption = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/register`, 'POST', {});
+    }
+
+    // Coverage = low, medium, high
+    const generateRecipesByNutritionalGoals = async (coverage) => {
+        return await apiCall(`/recipes/generateByNutritionalGoals?coverage=${coverage}`, 'GET');
+    }
+
+
+    // Transbank
+
+    const transbankPayment = async () => {
+        const body = { returnUrl: "https://fpjn-iic3143-1-github-io.vercel.app/homepage" };
+        const response = await apiCall('/payment', 'POST', body);
+        return response.redirect; 
+    };
+
+    const checkPaymentStatus = async (token_ws) => {
+        return await apiCall(`/payment/status?token_ws=${token_ws}`, 'GET');
+    };
+
+
+    // Pantry
+    const getPantry = async () => {
+        return await apiCall('/pantry', 'GET');
+    }
+
+    /*
+    El formato de ingredients
+    {
+        "ingredients": [
+            {
+                "name": "cinnamon",
+                "quantity": {
+                    "amount": 5,
+                    "unit": "grams"
+                }
+            },
+        ]
+    }
+    */
+    const addIngredientsToPantry = async (ingredients) => {
+        const body = { ingredients };
+        return await apiCall('/pantry/addIngredients', 'POST', body);
+
+    };
+
+
+    // Si no mandas el recepie ID, se manda la lista de ingredientes que quieres eliminar.
+    const removeIngredientsFromPantry = async ({ recipeId = null, ingredients = [] }) => {
+        const body = recipeId ? { recipeId } : { ingredients };
+        return await apiCall('/pantry/removeIngredients', 'POST', body);
+    };
+
+
 
     return {
         setDailyGoal,
         getDailyGoal,
         getPreferences,
         setPreferences,
-        getRecipes
+        getRecipes,
+        getRecipeInformation,
+        getRecipeNutrition,
+        registerRecipeConsumption,
+        generateRecipesByNutritionalGoals,
+        transbankPayment,
+        checkPaymentStatus,
+        getPantry,
+        addIngredientsToPantry,
+        removeIngredientsFromPantry
+
     };
 }

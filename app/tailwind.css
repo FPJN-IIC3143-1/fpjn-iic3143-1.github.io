@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@200;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,6 +11,11 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+}
+
+/* --- Input (Macros, dietary-preferences: hide the built-in buttons --- */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /* --- Protein Slider: cambia color thumb del slider --- */
