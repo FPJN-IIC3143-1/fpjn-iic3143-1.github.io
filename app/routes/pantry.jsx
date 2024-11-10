@@ -80,7 +80,7 @@ export default function Pantry() {
   // Add validation function
   const isValidQuantityFormat = (input) => {
     // Matches patterns like "500 grams", "2.5 kg", "3 units"
-    const regex = /^\d*\.?\d+\s+(gr|kg|un|ml|lt|lata)$/i;
+    const regex = /^\d*\.?\d+\s+(g|kg|un|ml|lt|lata|tsp|tbsp|c|pt|qt|gal|oz|fl oz|lb")$/i;
     return regex.test(input);
   };
 
@@ -200,6 +200,8 @@ export default function Pantry() {
               `${item.quantity.amount} ${item.quantity.unit}`
             ))}
             rightRowInfo={pantryItems.map((item) => item.name)}
+            api={api}
+            onPantryUpdate={handlePantryChange}
           />
           </div>
             
@@ -207,13 +209,14 @@ export default function Pantry() {
           <div className="w-1/2 flex flex-col items-center">
             <div className="bg-[#A3BE8C] rounded-[20px] p-6 w-full flex flex-col items-center justify-center text-[#182F40]">
               <h3 className="text-3xl font-bold mb-4">¿Compraste?</h3>
-              <form onSubmit={handleSubmitNewItem} className="flex flex-col space-y-4 w-full max-w-xs text-center">
+              <form onSubmit={handleSubmitNewItem} className="flex flex-col w-full max-w-xs text-center">
                 <input
                   type="text"
-                  placeholder="Nombre"
+                  placeholder="Nombre de Alimento"
                   value={newItem.name}
                   onChange={(e) => handleItemChange('name', e.target.value)}
-                  className="rounded-lg p-2 border border-gray-300 bg-[#F5F5F5] w-full text-center"
+                  className="rounded-lg p-2 border border-gray-300 bg-[#F5F5F5] w-full text-center
+                    focus:outline-none focus:shadow-lg focus:bg-[#D0BCFE] hover:bg-[#D0BCFE] mb-3"
                   required
                 />
                 <input
@@ -225,16 +228,17 @@ export default function Pantry() {
                     newItem.quantityError 
                       ? 'border-red-500' 
                       : 'border-gray-300'
-                  } bg-[#F5F5F5] w-full text-center`}
+                  } bg-[#F5F5F5] w-full text-center
+                  focus:outline-none focus:shadow-lg focus:bg-[#D0BCFE] hover:bg-[#D0BCFE]`}
                   required
                 />
                 {newItem.quantityError && (
                   <>
-                    <span className="text-red-500 text-sm font-bold">
+                    <span className="text-red-500 text-sm font-bold mt-1">
                       Formato requerido: [número] espacio [unidad]
                     </span>
-                    <span className="text-red-500 text-sm font-bold">
-                      [ 1 | 23 | 0.5 ] [gr, kg, un, ml, lt, lata]
+                    <span className="text-red-500 text-sm font-bold mt-1">
+                      [ 1 | 23 | 0.5 ] [g, kg, un, ml, lt, c, tsp, etc]
                     </span>
                   </>
                 )}

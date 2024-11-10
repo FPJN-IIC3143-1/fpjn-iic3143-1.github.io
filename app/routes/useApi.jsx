@@ -126,6 +126,11 @@ export default function useApi() {
         return await apiCall('/pantry/removeIngredients', 'POST', body);
     };
 
+    const updatePantry = async ({recipeId = null, ingredients = []}) => {
+        const body = recipeId ? { recipeId } : { ingredients };
+        return await apiCall('/pantry/updatePantry', 'POST', body);
+    }
+
 
 
     return {
@@ -142,7 +147,8 @@ export default function useApi() {
         checkPaymentStatus,
         getPantry,
         addIngredientsToPantry,
-        removeIngredientsFromPantry
+        removeIngredientsFromPantry,
+        updatePantry
 
     };
 }

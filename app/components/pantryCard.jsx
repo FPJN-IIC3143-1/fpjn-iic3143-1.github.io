@@ -1,14 +1,62 @@
 import { useState } from 'react';
 import React from 'react';
 
-export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo}) {
+export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo, api, onPantryUpdate}) {
   const [currentPage, setCurrentPage] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedQuantities, setEditedQuantities] = useState([]);
   
   const handleEditPantry = () => {
-    console.log("Edit Pantry Button: Pressed");
-  }
+    // Initialize editedQuantities with current values
+    const quantities = leftRowInfo.map(info => {
+      const [amount, unit] = info.split(' ');
+      return { amount, unit };
+    });
+    setEditedQuantities(quantities);
+    setIsEditing(true);
+  };
 
-  const ITEMS_PER_PAGE = 10;
+  const handleSavePantry = async () => {
+    try {
+      // Format the changes for API
+      const ingredientsToUpdate = editedQuantities.map((quantity, index) => ({
+        name: rightRowInfo[index].toLowerCase(),
+        quantity: {
+          amount: parseFloat(quantity.amount),
+          unit: quantity.unit
+        }
+      })).filter(item => !isNaN(item.quantity.amount)); // Ensure valid numbers only
+  
+      // Update pantry with new quantities in a single call
+      await api.updatePantry({ 
+        ingredients: ingredientsToUpdate 
+      });
+  
+      // Fetch and update pantry data
+      const updatedPantryData = await api.getPantry();
+      onPantryUpdate(updatedPantryData);
+      setIsEditing(false);
+  
+    } catch (error) {
+      console.error('Error updating pantry:', error);
+    }
+  };
+
+  const handleQuantityChange = (index, value) => {
+    // Only allow numbers
+    if (!/^\d*\.?\d*$/.test(value)) return;
+
+    setEditedQuantities(prev => {
+      const newQuantities = [...prev];
+      newQuantities[index] = {
+        ...newQuantities[index],
+        amount: value
+      };
+      return newQuantities;
+    });
+  };
+
+  const ITEMS_PER_PAGE = 8;
   const totalItems = leftRowInfo.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
@@ -52,6 +100,9 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo}) {
     <div className="generalContainer flex flex-col"
       style={{ width: boxWidth }}>
       <div className="container bg-[#A3BE8C] flex flex-col rounded-[20px] h-[450px] text-[#182F40]">          
+        <div className="flex justify-center w-full">
+          <h3 className="text-3xl font-bold my-6">Despensa</h3>
+        </div>
         <div className="items-container overflow-hidden flex-1 relative">
           <div className="flex flex-row h-full transition-transform duration-300 ease-in-out"
                style={{ transform: `translateX(-${currentPage * 100}%)` }}>
@@ -60,16 +111,34 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo}) {
                 className="flex-none w-full flex justify-center items-start pt-6 px-4" // Changed justify-start to justify-center
                 style={{ width: boxWidth }}>
                 <div className="flex flex-row justify-center w-full max-w-[80%]"> {/* Added container for centering */}
-                  <div className="leftRow flex flex-col items-end font-bold pr-[40px]"> {/* Changed items-center to items-end */}
-                    {leftRowInfo.slice(
-                      pageIndex * ITEMS_PER_PAGE,
-                      (pageIndex + 1) * ITEMS_PER_PAGE
-                    ).map((leftInfo, index) => (
-                      <div key={index} className="leftItem mt-[5px] mb-[5px]">
-                        {leftInfo}
+                <div className="leftRow flex flex-col items-end font-bold pr-[40px]">
+                {leftRowInfo.slice(
+                  pageIndex * ITEMS_PER_PAGE,
+                  (pageIndex + 1) * ITEMS_PER_PAGE
+                ).map((leftInfo, index) => {
+                  const actualIndex = pageIndex * ITEMS_PER_PAGE + index;
+                  if (isEditing) {
+                    // eslint-disable-next-line no-unused-vars
+                    const [_, unit] = leftInfo.split(' ');
+                    return (
+                      <div key={index} className="leftItem mt-[5px] mb-[5px] flex items-center">
+                        <input
+                          type="text"
+                          value={editedQuantities[actualIndex]?.amount || ''}
+                          onChange={(e) => handleQuantityChange(actualIndex, e.target.value)}
+                          className="w-16 text-right p-1 mr-2 rounded border border-gray-300"
+                        />
+                        <span>{unit}</span>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  }
+                  return (
+                    <div key={index} className="leftItem mt-[5px] mb-[5px]">
+                      {leftInfo}
+                    </div>
+                  );
+                })}
+              </div>
 
                   <div className="rightRow flex flex-col items-start">
                     {rightRowInfo.slice(
@@ -89,20 +158,26 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo}) {
 
         {/* Navigation Controls */}
         <div className="flex justify-between items-center px-4 py-2">
-          <button 
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className={`p-2 rounded-full ${currentPage === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#182F40] hover:bg-opacity-10'}`}
-          >
-            ←
-          </button>
+        <button 
+          onClick={handlePrevPage}
+          disabled={currentPage === 0}
+          className={`p-2 rounded-full ${
+            currentPage === 0 
+              ? 'text-[#182F40] opacity-70 cursor-not-allowed' 
+              : 'text-[#182F40] hover:bg-[#182F40] hover:bg-opacity-10'
+          }`}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
           {/* Pagination dots */}
           <div className="flex justify-center space-x-2">
             {getPaginationArray(currentPage, totalPages).map((pageNum, index) => (
               <React.Fragment key={index}>
                 {pageNum === '...' ? (
-                  <span className="px-1 text-[#182F40] opacity-50">...</span>
+                  <span className="px-1 text-[#182F40] font-bold opacity-50">...</span>
                 ) : (
                   <button
                     onClick={() => setCurrentPage(pageNum)}
@@ -120,21 +195,28 @@ export default function PantryCard({boxWidth, leftRowInfo, rightRowInfo}) {
           <button 
             onClick={handleNextPage}
             disabled={currentPage === totalPages - 1}
-            className={`p-2 rounded-full ${currentPage === totalPages - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#182F40] hover:bg-opacity-10'}`}
+            className={`p-2 rounded-full ${
+              currentPage === totalPages - 1 
+                ? 'text-[#182F40] opacity-70 cursor-not-allowed' 
+                : 'text-[#182F40] hover:bg-[#182F40] hover:bg-opacity-10'
+            }`}
           >
-            →
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
       </div>
 
       <div className="botContainer flex flex-col justify-center items-center pb-6 pt-5">
-        <button className="EditPantryButton bg-[#4F378B] hover:bg-[#7461AC] w-[200px] h-[50px] rounded-[15px] text-[#FFFFFF] mt-[10px] 
-          flex justify-center items-center max-w-fit text-base px-6 transition-colors duration-300"
-        onClick={handleEditPantry}>
-          <svg className="w-6 h-6 text-white mr-[10px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
-          </svg>
-          Editar Despensa
+        <button 
+          className="EditPantryButton flex justify-center items-center bg-[#4F378B] hover:bg-[#7461AC] w-[200px] h-[50px] rounded-[16px] text-[#FFFFFF] hover:text-[#FFFFFF] mt-[10px]"
+          onClick={isEditing ? handleSavePantry : handleEditPantry}
+        >
+        <svg className="w-6 h-6 text-white mr-[10px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"/>
+        </svg>
+          {isEditing ? 'Guardar Cambios' : 'Editar Despensa'}
         </button>
       </div>
     </div>
