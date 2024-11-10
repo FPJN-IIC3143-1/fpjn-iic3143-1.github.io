@@ -57,6 +57,17 @@ export default function useApi() {
         return await apiCall('/recipes', 'GET');
     };
 
+    const getRecipeInformation = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/info`, 'GET');
+    }
+    
+    const getRecipeNutrition = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
+    }
+
+
+
+
     const transbankPayment = async () => {
         const body = { returnUrl: "https://fpjn-iic3143-1-github-io.vercel.app/homepage" };
         const response = await apiCall('/payment', 'POST', body);
@@ -71,7 +82,7 @@ export default function useApi() {
         return await apiCall('/pantry', 'GET');
     }
 
-    
+
     /*
     El formato de ingredients
     {
@@ -106,6 +117,8 @@ export default function useApi() {
         getPreferences,
         setPreferences,
         getRecipes,
+        getRecipeInformation,
+        getRecipeNutrition,
         transbankPayment,
         checkPaymentStatus,
         getPantry,
