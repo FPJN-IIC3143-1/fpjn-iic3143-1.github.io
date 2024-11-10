@@ -20,6 +20,8 @@ export default function DietaryPreferences() {
     calories: "0",
   });
 
+  const [isEditingDiet, setIsEditingDiet] = useState(false);
+
   const [restrictions, setRestrictions] = useState({
     diet: [], 
     intolerances: []
@@ -144,6 +146,8 @@ export default function DietaryPreferences() {
     .catch(error => {
       alert("Error al guardar las preferencias: " + error.message);
     });
+
+    setIsEditingDiet(!isEditingDiet);
   };
 
   const macroLabels = {
@@ -183,7 +187,7 @@ export default function DietaryPreferences() {
             <div>
             <SearchBarBlockFood onSearch={handleSearchChange} selectedIntolerances={restrictions.intolerances} handleIntoleranceSelection={handleIntoleranceSelection} />
             </div>
-            <PurpleButton text="Guardar intolerancias" onClick={() => savePreferences()} className="mt-5" />
+            <PurpleButton text="Guardar intolerancias" onClick={() => savePreferences()} className="mt-5" /> {/* saveIntolerances */}
           </div>
           <div className="w-[340px] pl-[30px] text-2xl text-[#182F40] mt-[20px]">
             Busca un <span className="font-bold">alimento que no te guste</span> y no lo incluiremos en tus recetas
@@ -215,35 +219,57 @@ export default function DietaryPreferences() {
                   )}
                 </div>
               ))}
-            </div>
-            <PurpleButton text={isEditingMacros ? "Guardar objetivos" : "Editar objetivos"} onClick={saveMacroGoalsAndResetView} />
+            </div> 
+            {isEditingMacros ? 
+            <PurpleButton text="Guardar objetivos" onClick={saveMacroGoalsAndResetView} />
+            : 
+            <PurpleButton text="Editar objetivos" onClick={() => setIsEditingMacros(!isEditingMacros)} />
+           }
           </div>
 
           <div className="flex flex-col items-center">
-            <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Dieta</h3>
+            <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Dieta Preferida</h3>
             <div className="flex flex-col text-[#182F40] space-y-4 mb-[40px]">
               {[
                 { label: "Celíaco/a", key: "celiac" },
                 { label: "Vegano/a", key: "vegan" },
-                { label: "Pescetario/a", key: "pescetarian" },
+                { label: "Pescetariano/a", key: "pescetarian" },
                 { label: "Vegetariano/a", key: "vegetarian" },
               ].map((restriction) => (
                 <div key={restriction.key} className="flex items-center text-xl">
-                  <input
-                    type="checkbox"
-                    checked={restrictions.diet.includes(restriction.key)}
-                    onChange={() => handleDietSelection(restriction.key)}
-                    className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-pointer appearance-none 
-                              checked:bg-[#5B467C] checked:border-[#5B467C] relative"
-                    style={{
-                      backgroundColor: restrictions.diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
-                    }}
-                  />
+                  {isEditingDiet ? ( 
+                    <input
+                      type="checkbox"
+                      checked={restrictions.diet.includes(restriction.key)}
+                      onChange={() => handleDietSelection(restriction.key)}
+                      className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-pointer appearance-none 
+                                checked:bg-[#5B467C] checked:border-[#5B467C] relative"
+                      style={{
+                        backgroundColor: restrictions.diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
+                      }}
+                    />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      checked={restrictions.diet.includes(restriction.key)}
+                      onChange={() => handleDietSelection(restriction.key)}
+                      disabled
+                      className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-not-allowed appearance-none 
+                                checked:bg-[#5B467C] checked:border-[#5B467C] relative"
+                      style={{
+                        backgroundColor: restrictions.diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
+                      }}
+                    />
+                  )}
                   <label className="cursor-pointer">{restriction.label}</label>
                 </div>
               ))}
             </div>
-            <PurpleButton text="Guardar preferencias" onClick={savePreferences} className="mt-5" />
+            {isEditingDiet ? 
+            <PurpleButton text="Guardar dieta" onClick={savePreferences} /> // saveDietAndResetView
+            : 
+            <PurpleButton text="Editar dieta" onClick={() => setIsEditingDiet(!isEditingDiet)} />
+           }
           </div>
         </div>
       </div>
