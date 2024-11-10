@@ -35,6 +35,8 @@ export default function useApi() {
         }
     };
 
+
+    // Daily Goals 
     const getDailyGoal = async () => {
         return await apiCall('/nutrition/dailyGoal', 'GET');
     };
@@ -44,6 +46,8 @@ export default function useApi() {
         return await apiCall('/nutrition/dailyGoal', 'POST', dailyGoal);
     };
 
+
+     // Preferences
     const getPreferences = async () => {
         return await apiCall('/preferences', 'GET');
     };
@@ -53,9 +57,31 @@ export default function useApi() {
         return await apiCall('/preferences', 'POST', preferences);
     };
 
+
+     // Recipes
     const getRecipes = async () => {
         return await apiCall('/recipes', 'GET');
     };
+
+    const getRecipeInformation = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/info`, 'GET');
+    }
+    
+    const getRecipeNutrition = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
+    }
+    
+    const registerRecipeConsumption = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/register`, 'POST', {});
+    }
+
+    // Coverage = low, medium, high
+    const generateRecipesByNutritionalGoals = async (coverage) => {
+        return await apiCall(`/recipes/generateByNutritionalGoals?coverage=${coverage}`, 'GET');
+    }
+
+
+    // Transbank
 
     const transbankPayment = async () => {
         const body = { returnUrl: "https://fpjn-iic3143-1-github-io.vercel.app/homepage" };
@@ -67,13 +93,56 @@ export default function useApi() {
         return await apiCall(`/payment/status?token_ws=${token_ws}`, 'GET');
     };
 
+
+    // Pantry
+    const getPantry = async () => {
+        return await apiCall('/pantry', 'GET');
+    }
+
+    /*
+    El formato de ingredients
+    {
+        "ingredients": [
+            {
+                "name": "cinnamon",
+                "quantity": {
+                    "amount": 5,
+                    "unit": "grams"
+                }
+            },
+        ]
+    }
+    */
+    const addIngredientsToPantry = async (ingredients) => {
+        const body = { ingredients };
+        return await apiCall('/pantry/addIngredients', 'POST', body);
+
+    };
+
+
+    // Si no mandas el recepie ID, se manda la lista de ingredientes que quieres eliminar.
+    const removeIngredientsFromPantry = async ({ recipeId = null, ingredients = [] }) => {
+        const body = recipeId ? { recipeId } : { ingredients };
+        return await apiCall('/pantry/removeIngredients', 'POST', body);
+    };
+
+
+
     return {
         setDailyGoal,
         getDailyGoal,
         getPreferences,
         setPreferences,
         getRecipes,
+        getRecipeInformation,
+        getRecipeNutrition,
+        registerRecipeConsumption,
+        generateRecipesByNutritionalGoals,
         transbankPayment,
-        checkPaymentStatus
+        checkPaymentStatus,
+        getPantry,
+        addIngredientsToPantry,
+        removeIngredientsFromPantry
+
     };
 }
