@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import SideBar from "../components/sideBar";
-import DataCard from "../components/dataCard";
+import PantryCard from "../components/pantryCard";
 import PurpleButton from "../components/purpleButton";
 import NotificationLogOut from "../components/notificationLogOut";
 import { useAuth0 } from '@auth0/auth0-react';
@@ -71,11 +71,11 @@ export default function Pantry() {
         
         <h2 className="text-6xl font-thin text-[#182F40] tracking-wide leading-none mb-[30px]">Despensa</h2>
 
-        <div className="flex flex-row space-x-12 justify-center items-start">
+        <div className="flex lg:flex-row md:flex-row sm:flex-col space-x-12 justify-center items-start">
           
           {/* Pantry Item List */}
           <div className="w-1/2 flex flex-col items-center">
-            <DataCard 
+            <PantryCard 
               boxWidth={340} 
               leftRowInfo={pantryItems.map((item) => 
                 
@@ -128,3 +128,4 @@ export default function Pantry() {
     </div>
   );
 }
+
