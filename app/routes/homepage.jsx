@@ -25,7 +25,6 @@ export default function HomePage() {
 
   const handlePantryChange = (pantryData) => {
     if (pantryData && pantryData.length > 0) {
-      // Extract ingredients from first pantry object
       let ingredients = pantryData[0].ingredients;
   
       // Combine duplicate ingredients
