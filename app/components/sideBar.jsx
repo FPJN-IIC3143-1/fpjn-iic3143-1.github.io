@@ -4,18 +4,19 @@ import { useState, useEffect } from 'react';
 import arrowLeft from '/images/arrow-left-circle.png';
 import arrowRight from '/images/arrow-right-circle.png';
 import { useNavigate } from '@remix-run/react';
-
+import useApi from '../routes/useApi';
 
 export default function SideBar({ userName }) {
 
   const { logout } = useAuth0();
   const [isOpen, setIsOpen] = useState(true);
+  const [redirectUrl, setRedirectUrl] = useState(null);
+  const api = useApi();
+  const navigate = useNavigate();
 
   const toggleSideBar = () => {
     setIsOpen(!isOpen);
   }
-
-  const navigate = useNavigate();
 
 
   const mouseEnteranimation = (e) => {
@@ -46,6 +47,24 @@ export default function SideBar({ userName }) {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  
+
+  const handlePayment = async () => {
+    try {
+        const response = await api.transbankPayment(); 
+        if (response) {
+            setRedirectUrl(response);
+            window.location.href = response; 
+
+        } else {
+            alert("No se pudo procesar el pago.");
+        }
+    } catch (error) {
+        console.error("Error processing payment:", error);
+    }
+};
+
 
   return ( <>
       
@@ -94,10 +113,18 @@ export default function SideBar({ userName }) {
         className="FoodRestrictions-text mt-[25px] text-white" 
         onMouseEnter={mouseEnteranimation} 
         onMouseLeave={mouseLeaveanimation}
-        onClick={() => navigate("/dietary_preferences", {replace: true})}
+        onClick={() => navigate("/dietary-preferences", {replace: true})}
       >
         Preferencias Alimenticias
       </button>
+
+      <button className="PaymentButton mt-[25px] text-white"
+        onMouseEnter={mouseEnteranimation}
+        onMouseLeave={mouseLeaveanimation}
+        onClick={handlePayment}
+        >Pagar Suscripción
+      </button>
+
 
       <div className="UserName-text text-xl pt-[60px] text-white">Historiales</div>
       <div className="HorizontalWhiteLine w-[210px] mt-[10px] h-[3px] bg-[#ffffff]"></div>
@@ -108,17 +135,21 @@ export default function SideBar({ userName }) {
       onClick={() => navigate("/history")}
       >Macronutrientes
       </button>
+
       <button className="IngestedFood-text mt-[25px] text-white" 
       onMouseEnter={mouseEnteranimation} 
       onMouseLeave={mouseLeaveanimation}
       onClick={() => navigate("/history")}
       >Alimentos Consumidos</button>
 
+
+
+
       <div className="Separator h-[200px]"></div> 
 
       <div className="FooterSideBar flex flex-col w-[235px] items-center mt-5 text-white">
         <button 
-        className="FoodRestrictions-text mt-[25px] mb-[30px] text-white" 
+        className="FoodRestrictions-text mt-[25px] mb-[20px] text-white" 
         onMouseEnter={mouseEnteranimation} 
         onMouseLeave={mouseLeaveanimation}
         onClick={() => navigate("/homepage", {replace: true})}

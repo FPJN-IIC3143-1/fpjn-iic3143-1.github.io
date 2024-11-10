@@ -13,12 +13,12 @@ export default function Index() {
   
 
   return ( 
-    <div className="Background relative bg-[#E5E9F0] w-screen h-[1100px] pt-[100px] pl-[60px] pr-[60px] z-[1]">
+    <div className="Background relative bg-[#E5E9F0] w-screen h-[1100px] pt-[60px] pl-[60px] pr-[60px] z-[1]">
       {/* Texto principal */}
       <div className="text-9xl font-bold text-[#182F40] max-w-[1360px]"> 
         Asesorate con el mejor* food-tracker del mercado.
       </div> 
-      <div className="text-4xl text-[#182F40] pt-[15px]"> 
+      <div className="text-4xl text-[#182F40]"> 
         *Según nosotros, porque sí, la ocupamos. 
       </div>
     
@@ -34,7 +34,7 @@ export default function Index() {
               }}
             />
             <LandingButton 
-              bgColor="#CCC2DC" 
+              bgColor="#F5F2F8" 
               textColor="#381E72" 
               boxWidth={319} 
               text="Iniciar Sesión" 
@@ -45,14 +45,20 @@ export default function Index() {
          
       </div>
 
+      <div className="pt-[150px]">
+        <img src="/images/logo-con-titulo.png" alt="logo"/>
+      </div>
+
       {/* Círculos morados en el fondo */}
       <img src="/images/ellipse-landingpage.png" alt="elipse" className="fixed top-[10%] left-[80%] z-[-10]"/>
       <img src="/images/ellipse-landingpage.png" alt="elipse" className="fixed top-[35%] left-[70%] z-[-10]"/>
       <img src="/images/ellipse-landingpage.png" alt="elipse" className="fixed top-[40%] left-[90%] z-[-10]"/>
       <img src="/images/ellipse-landingpage.png" alt="elipse" className="fixed top-[55%] left-[65%] z-[-10]"/>
-
+      <img src="/images/ellipse-landingpage.png" alt="elipse" className="fixed top-[75%] left-[50%] z-[-10]"/>
+      <img src="/images/ellipse-landingpage.png" alt="elipse" className="fixed top-[65%] left-[75%] z-[-10]"/>
       {/* Círculo grande */}
-      <img src="/images/gran-ellipse-landing.png" alt="elipse" className="fixed top-[7y%] right-[0%] z-[-10]"/>
+      {/* <img src="/images/gran-ellipse-landing.png" alt="elipse" className="fixed top-[70%] right-[0%] z-[-10]"/> */}
+
     </div>
   );
 }
