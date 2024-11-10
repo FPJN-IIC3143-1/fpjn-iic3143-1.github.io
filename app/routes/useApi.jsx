@@ -82,6 +82,7 @@ export default function useApi() {
 
 
     // Transbank
+
     const transbankPayment = async () => {
         const body = { returnUrl: "https://fpjn-iic3143-1-github-io.vercel.app/homepage" };
         const response = await apiCall('/payment', 'POST', body);
@@ -115,6 +116,7 @@ export default function useApi() {
     const addIngredientsToPantry = async (ingredients) => {
         const body = { ingredients };
         return await apiCall('/pantry/addIngredients', 'POST', body);
+
     };
 
 
@@ -141,5 +143,6 @@ export default function useApi() {
         getPantry,
         addIngredientsToPantry,
         removeIngredientsFromPantry
+
     };
 }

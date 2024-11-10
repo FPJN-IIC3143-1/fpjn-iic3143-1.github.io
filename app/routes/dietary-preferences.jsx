@@ -3,6 +3,7 @@ import SideBar from "../components/sideBar";
 import PurpleButton from "../components/purpleButton";
 import NotificationLogOut from "../components/notificationLogOut";
 import { useAuth0 } from '@auth0/auth0-react';
+import SearchBar from "../components/searchBar";
 import useApi from './useApi';
 import { useToken } from './tokenContext';
 
@@ -136,6 +137,7 @@ export default function DietaryPreferences() {
         <div className='TopHorizontalContainer flex grow flex-shrink-0 justify-around mt-[100px] flex-wrap'>
           <div className='flex flex-col'>
             <h3 className="text-3xl font-bold text-[#182F40] mb-[30px]">Bloquear alimentos</h3>
+            <SearchBar/>
           </div>
           <div className="w-[340px] pl-[30px] text-2xl text-[#182F40] mt-[20px]">
             Busca un <span className="font-bold">alimento que no te guste</span> y no lo incluiremos en tus recetas
@@ -147,7 +149,7 @@ export default function DietaryPreferences() {
             <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios</div>
             <div className="MacrosFields flex flex-col text-xl text-[#182F40] mb-[40px]">
               {Object.keys(macroGoals).map((macro) => (
-                <div key={macro} className="MacroFieldContainer flex items-center justify-between w-[250px] mb-[10px]">
+                <div key={macro} className="MacroFieldContainer flex items-center justify-between w-[250px] mb-[8px]">
                   <div className="MacroFieldLabel text-[#182F40] capitalize">
                     {macroLabels[macro]}
                   </div>
@@ -158,7 +160,7 @@ export default function DietaryPreferences() {
                       name={macro}
                       value={macroGoals[macro]}
                       onChange={(e) => setMacroGoals({ ...macroGoals, [macro]: e.target.value })}
-                      className="w-[80px] pt-[5px] pb-[7px] pr-[10px] rounded-[10px] text-right text-lg bg-[#ffffff]"
+                      className="w-[80px] pr-[10px] rounded-[10px] text-right text-lg bg-[#ffffff] focus:outline-none focus:shadow-lg focus:bg-[#D0BCFE] hover:bg-[#D0BCFE]"
                     />
                   ) : (
                     <div className="MacroFieldValue text-lg font-bold">
@@ -174,14 +176,14 @@ export default function DietaryPreferences() {
           {/* Restricciones Alimentarias */}
           <div className="flex flex-col items-center">
             <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Restricciones alimentarias</h3>
-            <div className="flex flex-col text-[#182F40] space-y-4">
+            <div className="flex flex-col text-[#182F40] space-y-4 mb-[40px]">
               {[
                 { label: "Celíaco/a", key: "celiac" },
                 { label: "Intolerante a la lactosa", key: "lactoseIntolerant" },
                 { label: "Vegano/a", key: "vegan" },
                 { label: "Vegetariano/a", key: "vegetarian" },
               ].map((restriction) => (
-                <div key={restriction.key} className="flex items-center text-2xl">
+                <div key={restriction.key} className="flex items-center text-xl">
                   <input
                     type="checkbox"
                     checked={restrictions.intolerances.includes(restriction.key)}
