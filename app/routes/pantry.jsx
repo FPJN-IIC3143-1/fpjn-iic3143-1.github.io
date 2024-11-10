@@ -86,9 +86,6 @@ export default function Pantry() {
                 <span key={`name-${item.id}`}>{item.name}</span> 
               ))} 
             />
-            <div className="flex justify-center mt-4">
-              <PurpleButton text={"Editar Despensa"} />
-            </div>
           </div>
             
           {/* Add new purchases */}
