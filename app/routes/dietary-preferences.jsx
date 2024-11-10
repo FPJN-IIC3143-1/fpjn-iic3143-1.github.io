@@ -3,9 +3,11 @@ import SideBar from "../components/sideBar";
 import PurpleButton from "../components/purpleButton";
 import NotificationLogOut from "../components/notificationLogOut";
 import { useAuth0 } from '@auth0/auth0-react';
-import SearchBarBlockFood from "../components/searchBarBlockFood";
-import useApi from './useApi';
 import { useToken } from './tokenContext';
+import useDietPreferences from './helper_preferences/useDietPreferences';
+import useIntolerancePreferences from './helper_preferences/useIntolerancePreferences';
+import useMacroGoals from './helper_preferences/useMacroGoals';
+import useApi from './useApi';
 
 export default function DietaryPreferences() { 
   const { isAuthenticated, loginWithRedirect } = useAuth0();
@@ -13,66 +15,13 @@ export default function DietaryPreferences() {
   const { tokenReady } = useToken();
 
   const [isEditingMacros, setIsEditingMacros] = useState(false);
-  const [macroGoals, setMacroGoals] = useState({
-    protein: "0",
-    carbs: "0",
-    fats: "0",
-    calories: "0",
-  });
-
   const [isEditingDiet, setIsEditingDiet] = useState(false);
-
-  const [restrictions, setRestrictions] = useState({
-    diet: [], 
-    intolerances: []
-  });
-
+  const [isEditingIntolerances, setIsEditingIntolerances] = useState(false); // New state for intolerances edit mode
   const [dataFetched, setDataFetched] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleMacroChange = (goalData) => {
-    if (goalData && goalData.goal) {
-      setMacroGoals({
-        protein: String(goalData.goal.protein || 0),
-        carbs: String(goalData.goal.carbs || 0),
-        fats: String(goalData.goal.fats || 0),
-        calories: String(goalData.goal.calories || 0),
-      });
-    } else {
-      console.log("No goal data found in response");
-    }
-  };
-
-  const handlePreferencesChange = (preferences) => {
-    if (preferences) {
-      setRestrictions({
-        diet: preferences.diet ? preferences.diet.split(",") : [], 
-        intolerances: Array.isArray(preferences.intolerances) ? preferences.intolerances : []
-      });
-    }
-  };
-
-  const handleDietSelection = (dietItem) => {
-    setRestrictions((prevRestrictions) => {
-      const updatedDiet = prevRestrictions.diet.includes(dietItem)
-        ? prevRestrictions.diet.filter((item) => item !== dietItem)
-        : [...prevRestrictions.diet, dietItem];
-      return { ...prevRestrictions, diet: updatedDiet };
-    });
-  };
-
-  const handleIntoleranceSelection = (intolerance) => {
-    setRestrictions((prevRestrictions) => {
-      const updatedIntolerances = prevRestrictions.intolerances.includes(intolerance)
-        ? prevRestrictions.intolerances.filter((item) => item !== intolerance)
-        : [...prevRestrictions.intolerances, intolerance];
-      return { ...prevRestrictions, intolerances: updatedIntolerances };
-    });
-  };
-
-  const handleSearchChange = (query) => {
-    setSearchQuery(query);
-  };
+  const { diet, setDiet, handleDietSelection, saveDietPreferences } = useDietPreferences();
+  const { intolerances, setIntolerances, handleIntoleranceSelection, saveIntolerancePreferences } = useIntolerancePreferences();
+  const { macroGoals, setMacroGoals, handleMacroChange, saveMacroGoals } = useMacroGoals();
 
   useEffect(() => { 
     if (!isAuthenticated) {
@@ -81,97 +30,36 @@ export default function DietaryPreferences() {
     }
 
     if (tokenReady && !dataFetched) {
-      console.log("Token is ready, fetching data...");
-      
       Promise.all([api.getDailyGoal(), api.getPreferences()])
         .then(([goalData, preferences]) => {
-          console.log("Fetched daily goal:", goalData);
-          console.log("Fetched preferences:", preferences);
-
           handleMacroChange(goalData);
-          handlePreferencesChange(preferences);  
+          if (preferences) {
+            setDiet(preferences.diet ? preferences.diet.split(",") : []);
+            setIntolerances(Array.isArray(preferences.intolerances) ? preferences.intolerances : []);
+          }
         })
-        .catch(error => {
-          console.error("Error fetching data:", error.message);
-        });
-
-      setDataFetched(true);
+        .catch(error => console.error("Error fetching data:", error))
+        .finally(() => setDataFetched(true));
     }
-  }, [isAuthenticated, loginWithRedirect, tokenReady, dataFetched]);
-
+  }, [isAuthenticated, loginWithRedirect, tokenReady, dataFetched, handleMacroChange, setDiet, setIntolerances, api]);
 
   const saveMacroGoalsAndResetView = () => {
-    api.setDailyGoal(macroGoals)
-      .then(response => {
-        if (response?.message && response.message.toLowerCase().includes("successfully")) {
-          alert("Objetivos guardados exitosamente");
-          api.getDailyGoal().then(handleMacroChange);
-        } else {
-          alert("Error al guardar los objetivos: " + (response?.message || "unknown error"));
-        }
-      })
-      .catch(error => {
-        alert("Error al guardar los objetivos: " + error.message);
-      });
-
-    setIsEditingMacros(!isEditingMacros);
-  };
-
-  const savePreferences = () => {
-    const validDiets = ["celiac", "vegetarian", "vegan", "pescetarian"];
-    const filteredDiet = Array.isArray(restrictions.diet) 
-      ? restrictions.diet.filter(diet => validDiets.includes(diet)).join(',')
-      : '';
-  
-    const spanishToEnglishIntolerances = Object.fromEntries(
-      Object.entries(intoleranceLabels).map(([english, spanish]) => [spanish, english])
-    );
-  
-    const englishIntolerances = restrictions.intolerances.map(
-      intolerance => spanishToEnglishIntolerances[intolerance] || intolerance
-    );
-  
-    api.setPreferences({
-      diet: filteredDiet,
-      intolerances: englishIntolerances
-    })
-    .then(response => {
-      if (response?.message && response.message.toLowerCase().includes("successfully")) {
-        alert("Preferencias guardadas exitosamente");
-        api.getPreferences().then(handlePreferencesChange);
-      } else {
-        alert("Error al guardar las preferencias: " + (response?.message || "unknown error"));
-      }
-    })
-    .catch(error => {
-      alert("Error al guardar las preferencias: " + error.message);
+    saveMacroGoals().then(() => {
+      setIsEditingMacros(false);
     });
-
-    setIsEditingDiet(!isEditingDiet);
   };
 
-  const macroLabels = {
-    protein: "Proteína",
-    carbs: "Carbohidratos",
-    fats: "Grasas",
-    calories: "Calorías"
+  const saveDietPreferencesAndResetView = () => {
+    saveDietPreferences(intolerances).then(() => {
+      setIsEditingDiet(false);
+    });
   };
 
-  const intoleranceLabels = {
-    dairy: "Lácteos",
-    egg: "Huevo",
-    gluten: "Gluten",
-    grain: "Grano",
-    peanut: "Maní",
-    seafood: "Mariscos",
-    sesame: "Sésamo",
-    shellfish: "Moluscos",
-    soy: "Soya",
-    sulfite: "Sulfito",
-    treeNut: "Nueces de árbol",
-    wheat: "Trigo"
+  const saveIntolerancesAndResetView = () => {
+    saveIntolerancePreferences(diet).then(() => {
+      setIsEditingIntolerances(false); // Reset edit mode for intolerances
+    });
   };
-
 
   return (
     <div className="GeneralContainer flex">
@@ -181,19 +69,85 @@ export default function DietaryPreferences() {
         <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tú decides...</div>
         <div className="text-7xl text-[#182F40] font-extralight">Preferencias Alimenticias</div>
 
-        <div className='TopHorizontalContainer flex grow flex-shrink-0 justify-around mt-[100px] flex-wrap'>
-          <div className='flex flex-col items-center'>  {/* Center alignment of content */}
-            <h3 className="text-3xl font-bold text-[#182F40] mb-[30px]">Bloquear alimentos</h3>
-            <div>
-            <SearchBarBlockFood onSearch={handleSearchChange} selectedIntolerances={restrictions.intolerances} handleIntoleranceSelection={handleIntoleranceSelection} />
-            </div>
-            <PurpleButton text="Guardar intolerancias" onClick={() => savePreferences()} className="mt-5" /> {/* saveIntolerances */}
+        {/* Intolerances Section */}
+        <div className="flex flex-col items-center mt-[40px]">
+          <h3 className="text-3xl font-bold text-[#182F40] mb-[30px]">Bloquear alimentos</h3>
+          <div className="grid grid-cols-4 gap-4 text-[#182F40] mb-[40px]">
+            {[
+              "Lácteos", "Huevo", "Gluten", "Grano", "Maní", 
+              "Mariscos", "Sésamo", "Moluscos", "Soya", "Sulfito", 
+              "Nueces de árbol", "Trigo"
+            ].map((intolerance) => (
+              <div key={intolerance} className="flex items-center text-xl">
+                <input
+                  type="checkbox"
+                  checked={intolerances.includes(intolerance)}
+                  onChange={() => handleIntoleranceSelection(intolerance)}
+                  disabled={!isEditingIntolerances} // Disable checkbox when not in edit mode
+                  className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-pointer appearance-none 
+                            checked:bg-[#5B467C] checked:border-[#5B467C] relative"
+                  style={{
+                    backgroundColor: intolerances.includes(intolerance) ? '#5B467C' : '#E7E7E7',
+                  }}
+                />
+                <label className="cursor-pointer">{intolerance}</label>
+              </div>
+            ))}
           </div>
-          <div className="w-[340px] pl-[30px] text-2xl text-[#182F40] mt-[20px]">
-            Busca un <span className="font-bold">alimento que no te guste</span> y no lo incluiremos en tus recetas
-          </div>
+          {isEditingIntolerances ? (
+            <PurpleButton text="Guardar intolerancias" onClick={saveIntolerancesAndResetView} />
+          ) : (
+            <PurpleButton text="Editar intolerancias" onClick={() => setIsEditingIntolerances(true)} />
+          )}
         </div>
 
+        {/* Diet Section */}
+        <div className="flex flex-col items-center">
+          <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Dieta Preferida</h3>
+          <div className="flex flex-col text-[#182F40] space-y-4 mb-[40px]">
+            {[
+              { label: "Celíaco/a", key: "celiac" },
+              { label: "Vegano/a", key: "vegan" },
+              { label: "Pescetariano/a", key: "pescetarian" },
+              { label: "Vegetariano/a", key: "vegetarian" },
+            ].map((restriction) => (
+              <div key={restriction.key} className="flex items-center text-xl">
+                {isEditingDiet ? ( 
+                  <input
+                    type="checkbox"
+                    checked={diet.includes(restriction.key)}
+                    onChange={() => handleDietSelection(restriction.key)}
+                    className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-pointer appearance-none 
+                              checked:bg-[#5B467C] checked:border-[#5B467C] relative"
+                    style={{
+                      backgroundColor: diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
+                    }}
+                  />
+                ) : (
+                  <input
+                    type="checkbox"
+                    checked={diet.includes(restriction.key)}
+                    onChange={() => handleDietSelection(restriction.key)}
+                    disabled
+                    className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-not-allowed appearance-none 
+                              checked:bg-[#5B467C] checked:border-[#5B467C] relative"
+                    style={{
+                      backgroundColor: diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
+                    }}
+                  />
+                )}
+                <label className="cursor-pointer">{restriction.label}</label>
+              </div>
+            ))}
+          </div>
+          {isEditingDiet ? 
+            <PurpleButton text="Guardar dieta" onClick={saveDietPreferencesAndResetView} />
+            : 
+            <PurpleButton text="Editar dieta" onClick={() => setIsEditingDiet(!isEditingDiet)} />
+          }
+        </div>
+
+        {/* Macros Section */}
         <div className="BottomHorizontalContainer flex justify-evenly mt-[80px] flex-wrap">
           <div className="flex flex-col items-center">
             <div className="text-3xl font-bold text-[#182F40] mb-[30px]">Objetivos Diarios</div>
@@ -201,7 +155,7 @@ export default function DietaryPreferences() {
               {Object.keys(macroGoals).map((macro) => (
                 <div key={macro} className="MacroFieldContainer flex items-center justify-between w-[250px] mb-[8px]">
                   <div className="MacroFieldLabel text-[#182F40] capitalize">
-                    {macroLabels[macro]}
+                    {macro === "calories" ? "Calorías" : macro.charAt(0).toUpperCase() + macro.slice(1)}
                   </div>
                   {isEditingMacros ? (
                     <input
@@ -221,55 +175,10 @@ export default function DietaryPreferences() {
               ))}
             </div> 
             {isEditingMacros ? 
-            <PurpleButton text="Guardar objetivos" onClick={saveMacroGoalsAndResetView} />
-            : 
-            <PurpleButton text="Editar objetivos" onClick={() => setIsEditingMacros(!isEditingMacros)} />
-           }
-          </div>
-
-          <div className="flex flex-col items-center">
-            <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Dieta Preferida</h3>
-            <div className="flex flex-col text-[#182F40] space-y-4 mb-[40px]">
-              {[
-                { label: "Celíaco/a", key: "celiac" },
-                { label: "Vegano/a", key: "vegan" },
-                { label: "Pescetariano/a", key: "pescetarian" },
-                { label: "Vegetariano/a", key: "vegetarian" },
-              ].map((restriction) => (
-                <div key={restriction.key} className="flex items-center text-xl">
-                  {isEditingDiet ? ( 
-                    <input
-                      type="checkbox"
-                      checked={restrictions.diet.includes(restriction.key)}
-                      onChange={() => handleDietSelection(restriction.key)}
-                      className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-pointer appearance-none 
-                                checked:bg-[#5B467C] checked:border-[#5B467C] relative"
-                      style={{
-                        backgroundColor: restrictions.diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
-                      }}
-                    />
-                  ) : (
-                    <input
-                      type="checkbox"
-                      checked={restrictions.diet.includes(restriction.key)}
-                      onChange={() => handleDietSelection(restriction.key)}
-                      disabled
-                      className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-not-allowed appearance-none 
-                                checked:bg-[#5B467C] checked:border-[#5B467C] relative"
-                      style={{
-                        backgroundColor: restrictions.diet.includes(restriction.key) ? '#5B467C' : '#E7E7E7',
-                      }}
-                    />
-                  )}
-                  <label className="cursor-pointer">{restriction.label}</label>
-                </div>
-              ))}
-            </div>
-            {isEditingDiet ? 
-            <PurpleButton text="Guardar dieta" onClick={savePreferences} /> // saveDietAndResetView
-            : 
-            <PurpleButton text="Editar dieta" onClick={() => setIsEditingDiet(!isEditingDiet)} />
-           }
+              <PurpleButton text="Guardar objetivos" onClick={saveMacroGoalsAndResetView} />
+              : 
+              <PurpleButton text="Editar objetivos" onClick={() => setIsEditingMacros(!isEditingMacros)} />
+            }
           </div>
         </div>
       </div>
