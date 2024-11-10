@@ -4,20 +4,13 @@ import DataCard from "../components/dataCard";
 import PurpleButton from "../components/purpleButton";
 import NotificationLogOut from "../components/notificationLogOut";
 import { useAuth0 } from '@auth0/auth0-react';
+import useApi from './useApi';
+import { useToken } from './tokenContext';
 
 export default function Pantry() {
-  const [pantryItems, setPantryItems] = useState([
-    { id: 1, quantity: '10', name: 'Huevos' },
-    { id: 2, quantity: '530g', name: 'Pollo' },
-    { id: 3, quantity: '1kg', name: 'Cerdo' },
-    { id: 4, quantity: '4', name: 'Yogurt Natural' },
-    { id: 5, quantity: '250g', name: 'Mantequilla' },
-    { id: 6, quantity: '10', name: 'Tomates' },
-    { id: 7, quantity: '1', name: 'Lechuga' },
-    { id: 8, quantity: '7', name: 'Paltas' },
-    { id: 9, quantity: '100g', name: 'Semillas Chía' }
-  ]);
+  const [pantryItems, setPantryItems] = useState([]);
 
+  // Checkear si el usuario está autenticado
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   useEffect(() => {
     if (!isAuthenticated) {
@@ -25,9 +18,40 @@ export default function Pantry() {
     }
   }, [isAuthenticated, loginWithRedirect]);
 
+  // Usar useApi para traer la data de la despensa
+  const api = useApi();
+  const { tokenReady } = useToken(); 
+  const [dataFetched, setDataFetched] = useState(false);
 
-  
+  const handlePantryChange = (pantryData) => {
+    if (pantryItems){
+      setPantryItems(pantryData);
+    } else {
+      console.error("No pantry data found in response");
+    }
+  }
 
+  useEffect(() => { 
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+
+    if (tokenReady && !dataFetched) {
+      console.log("Token is ready, fetching data...");
+      
+      Promise.all([api.getPantry()])
+        .then(([pantryData]) => {
+          console.log("Fetched Pantry Data:", pantryData);
+          handlePantryChange(pantryData);
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error.message);
+        });
+
+      setDataFetched(true);
+    }
+  }, [isAuthenticated, loginWithRedirect, tokenReady, dataFetched]);
 
   const handleQuantityChange = (id, newQuantity) => {
     setPantryItems((prevItems) =>
