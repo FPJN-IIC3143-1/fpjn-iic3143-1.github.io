@@ -35,6 +35,8 @@ export default function useApi() {
         }
     };
 
+
+    // Daily Goals 
     const getDailyGoal = async () => {
         return await apiCall('/nutrition/dailyGoal', 'GET');
     };
@@ -44,6 +46,8 @@ export default function useApi() {
         return await apiCall('/nutrition/dailyGoal', 'POST', dailyGoal);
     };
 
+
+     // Preferences
     const getPreferences = async () => {
         return await apiCall('/preferences', 'GET');
     };
@@ -53,6 +57,8 @@ export default function useApi() {
         return await apiCall('/preferences', 'POST', preferences);
     };
 
+
+     // Recipes
     const getRecipes = async () => {
         return await apiCall('/recipes', 'GET');
     };
@@ -64,10 +70,18 @@ export default function useApi() {
     const getRecipeNutrition = async (recipeId) => {
         return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
     }
+    
+    const registerRecipeConsumption = async (recipeId) => {
+        return await apiCall(`/recipes/${recipeId}/register`, 'POST', {});
+    }
+
+    // Coverage = low, medium, high
+    const generateRecipesByNutritionalGoals = async (coverage) => {
+        return await apiCall(`/recipes/generateByNutritionalGoals?coverage=${coverage}`, 'GET');
+    }
 
 
-
-
+    // Transbank
     const transbankPayment = async () => {
         const body = { returnUrl: "https://fpjn-iic3143-1-github-io.vercel.app/homepage" };
         const response = await apiCall('/payment', 'POST', body);
@@ -78,10 +92,11 @@ export default function useApi() {
         return await apiCall(`/payment/status?token_ws=${token_ws}`, 'GET');
     };
 
+
+    // Pantry
     const getPantry = async () => {
         return await apiCall('/pantry', 'GET');
     }
-
 
     /*
     El formato de ingredients
@@ -119,6 +134,8 @@ export default function useApi() {
         getRecipes,
         getRecipeInformation,
         getRecipeNutrition,
+        registerRecipeConsumption,
+        generateRecipesByNutritionalGoals,
         transbankPayment,
         checkPaymentStatus,
         getPantry,
