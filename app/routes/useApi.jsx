@@ -54,6 +54,7 @@ export default function useApi() {
 
     const setPreferences = async ({ diet, intolerances }) => {
         const preferences = { diet, intolerances };
+        console.log('Setting preferences', preferences)
         return await apiCall('/preferences', 'POST', preferences);
     };
 
