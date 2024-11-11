@@ -125,7 +125,7 @@ export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightR
                           type="text"
                           value={editedQuantities[actualIndex]?.amount || ''}
                           onChange={(e) => handleQuantityChange(actualIndex, e.target.value)}
-                          className="h-[28px] w-[60px] text-right px-1 mr-2 rounded border border-gray-300 leading-none"
+                          className="h-[28px] w-[60px] text-right px-1 mr-2 rounded border bg-gray-50 border-gray-300 leading-none"
                         />
                         <span className="w-[40px] h-[28px] flex items-center">{unit}</span>
                       </div>
