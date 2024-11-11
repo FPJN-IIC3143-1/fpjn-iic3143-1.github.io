@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import SideBar from "../components/sideBar";
 import PantryCard from "../components/pantryCard";
@@ -181,7 +182,7 @@ export default function Pantry() {
   };
 
   return (
-    <div className="generalContainer flex">
+    <div className="flex generalContainer">
       <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
 
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
@@ -190,10 +191,10 @@ export default function Pantry() {
         
         <h2 className="text-6xl font-thin text-[#182F40] tracking-wide leading-none mb-[30px]">Despensa</h2>
 
-        <div className="flex lg:flex-row md:flex-row sm:flex-col space-x-12 justify-center items-start">
+        <div className="flex items-start justify-center space-x-12 lg:flex-row md:flex-row sm:flex-col">
           
           {/* Pantry Item List */}
-          <div className="w-1/2 flex flex-col items-center">
+          <div className="flex flex-col items-center w-1/2">
           <PantryCard 
             boxWidth={340} 
             leftRowInfo={pantryItems.map((item) => (
@@ -206,9 +207,9 @@ export default function Pantry() {
           </div>
             
           {/* Add new purchases */}
-          <div className="w-1/2 flex flex-col items-center">
+          <div className="flex flex-col items-center w-1/2">
             <div className="bg-[#A3BE8C] rounded-[20px] p-6 w-full flex flex-col items-center justify-center text-[#182F40]">
-              <h3 className="text-3xl font-bold mb-4">¿Compraste?</h3>
+              <h3 className="mb-4 text-3xl font-bold">¿Compraste?</h3>
               <form onSubmit={handleSubmitNewItem} className="flex flex-col w-full max-w-xs text-center">
                 <input
                   type="text"
@@ -234,10 +235,10 @@ export default function Pantry() {
                 />
                 {newItem.quantityError && (
                   <>
-                    <span className="text-red-500 text-sm font-bold mt-1">
+                    <span className="mt-1 text-sm font-bold text-red-500">
                       Formato requerido: [número] espacio [unidad]
                     </span>
-                    <span className="text-red-500 text-sm font-bold mt-1">
+                    <span className="mt-1 text-sm font-bold text-red-500">
                       [ 1 | 23 | 0.5 ] [g, kg, un, ml, lt, c, tsp, etc]
                     </span>
                   </>
@@ -266,4 +267,3 @@ export default function Pantry() {
     </div>
   );
 }
-
