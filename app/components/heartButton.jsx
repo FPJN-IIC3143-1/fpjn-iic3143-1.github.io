@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export default function HeartButton() {
   const [isFilled, setIsFilled] = useState(false);
@@ -8,7 +8,7 @@ export default function HeartButton() {
   };
 
   return (
-    <button onClick={handleClick}>
+    <button onClick={handleClick} data-testid="heart-button">
       {isFilled ? (
         // Corazón relleno
         <svg
