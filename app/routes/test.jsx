@@ -4,9 +4,26 @@ import DataCard from "../components/dataCard";
 import NotificationLogOut from "../components/notificationLogOut";
 import PantryCard from "../components/pantryCard";
 import WelcomePopUp from "../components/welcomePopUp"; // Asegúrate de que la ruta sea correcta
+import { useState, useEffect } from "react";
 
 export default function TestPage() { 
     // This is a test page to see if the components are working correctly
+    // Checkear si el usuario está autenticado
+    const [showWelcome, setShowWelcome] = useState(false); // Start as false
+    
+    useEffect(() => {
+        // Check if first time user
+        const hasVisited = localStorage.getItem('hasVisitedBefore');
+        if (!hasVisited) {
+        setShowWelcome(true);
+        }
+    }, []);
+
+    const handleWelcomeSubmit = () => {
+        localStorage.setItem('hasVisitedBefore', 'true');
+        setShowWelcome(false);
+    };
+    
     const pantryItems = [{ id: 1, quantity: '10', name: 'Huevos' },
         { id: 2, quantity: '530g', name: 'Pollo' },
         { id: 3, quantity: '1kg', name: 'Cerdo' },
@@ -98,7 +115,7 @@ export default function TestPage() {
             <text>     Ahora el cuadro se ubica arriba a la derecha.</text>
             <NotificationLogOut />
             <h2>Welcome PopUp</h2>
-            <WelcomePopUp />
+            {showWelcome && <WelcomePopUp onSubmitSuccess={handleWelcomeSubmit} />}
             <h2>Landing Button</h2>
             <LandingButton bgColor={"#381E72"} textColor={"#D0BCFE"} boxWidth={"200px"} text={"Click Me!"} />
             <h2>Recipe Card</h2>
