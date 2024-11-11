@@ -97,6 +97,7 @@ export default function CreditCardInput({ cardInfo, onCardInfoChange, errors, se
           <input
             type="month"
             name="expiry"
+            placeholder="YYYY-MM"
             value={cardInfo.originalExpiry || ''} // Use original YYYY-MM format for input
             onChange={handleInputChange}
             onFocus={(e) => setFocus(e.target.name)}
