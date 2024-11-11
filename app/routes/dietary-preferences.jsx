@@ -72,7 +72,7 @@ export default function DietaryPreferences() {
         {/* Intolerances Section */}
         <div className="flex flex-col items-center mt-[40px]">
           <h3 className="text-3xl font-bold text-[#182F40] mb-[30px]">Bloquear alimentos</h3>
-          <div className="grid grid-cols-4 gap-4 text-[#182F40] mb-[40px]">
+          <div className="grid grid-cols-4 gap-4 text-[#182F40] mb-[40px] bg-[#A3BE8C] rounded-[20px] p-[30px]">
             {[
               "Lácteos", "Huevo", "Gluten", "Grano", "Maní", 
               "Mariscos", "Sésamo", "Moluscos", "Soya", "Sulfito", 
@@ -102,7 +102,7 @@ export default function DietaryPreferences() {
         </div>
 
         <div className="BottomHorizontalContainer flex justify-evenly mt-[80px] flex-wrap">
-          
+
           {/* Diet Section */}
           <div className="flex flex-col items-center">
             <h3 className="text-3xl font-bold text-[#182F40] mb-[20px]">Dieta Preferida</h3>
