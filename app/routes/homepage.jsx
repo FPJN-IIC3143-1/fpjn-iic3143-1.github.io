@@ -16,9 +16,13 @@ import { useState, useEffect } from "react";
 import { useToken } from "./tokenContext";
 
 export default function HomePage() {
+  const api = useApi();
   useApi();
   // Checkear si el usuario está autenticado
   const [showWelcome, setShowWelcome] = useState(false); // Start as false
+  const [pantryItems, setPantryItems] = useState([]);
+  const { tokenReady } = useToken(); 
+  const [dataFetched, setDataFetched] = useState(false);
   
   useEffect(() => {
     // Check if first time user
@@ -34,11 +38,6 @@ export default function HomePage() {
   };
 
   // Usar useApi para traer la data de la despensa
-  const [pantryItems, setPantryItems] = useState([]);
-  const api = useApi();
-  const { tokenReady } = useToken(); 
-  const [dataFetched, setDataFetched] = useState(false);
-
   const handlePantryChange = (pantryData) => {
     if (pantryData && pantryData.length > 0) {
       let ingredients = pantryData[0].ingredients;
