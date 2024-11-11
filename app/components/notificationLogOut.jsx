@@ -1,3 +1,4 @@
+import React from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function NotificationLogOut() {
@@ -14,17 +15,21 @@ export default function NotificationLogOut() {
 
   return(
     <div className="container bg-[#182F40] flex flex-row justify-center items-center 
-        w-[280px] h-[50px] rounded-[2px] gap-12 px-8 absolute top-0 right-0 m-1">
+        w-[280px] h-[50px] rounded-[2px] gap-12 px-8 absolute top-0 right-0 m-1"
+        data-testid="notification-log-out"
+    >
       <div className="vertLine w-[0px] h-[25px] bg-gray-100 border-x-gray-100 border-x-solid rounded-[2px] border-x-2 border-"/>
       <button className="flex justify-center items-center w-[40px] h=[50px] rounded-[8px] hover:border-white hover:border hover:border-solid border-none" 
         onClick={handleNotification}
+        data-testid="notification-button"
       >  
         <img src="/NotificationLogOut/notifications.png" 
           alt="notification" 
           className="w-[30px] h-[40px] pt-[7px] pb-[7px]"
         />
       </button>
-      <button className="LogOutButton flex justify-center items-center w-[40px] h=[50px] rounded-[8px] hover:border-white hover:border hover:border-solid border-none" 
+      <button className="LogOutButton flex justify-center items-center w-[40px] h=[50px] rounded-[8px] hover:border-white hover:border hover:border-solid border-none"
+        data-testid="log-out-button"
         onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
       >
         <img src="/NotificationLogOut/logout.png" 
