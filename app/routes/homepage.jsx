@@ -10,15 +10,31 @@ import SideBar from "../components/sideBar";
 import DataCard from "../components/dataCard";
 import PantryCard from "../components/pantryCard";
 import NotificationLogOut from "../components/notificationLogOut";
+import WelcomePopUp from "../components/welcomePopUp";
 import useApi from "./useApi";
 import { useState, useEffect } from "react";
 import { useToken } from "./tokenContext";
 
 export default function HomePage() {
-  const [pantryItems, setPantryItems] = useState([]);
+  useApi();
   // Checkear si el usuario está autenticado
+  const [showWelcome, setShowWelcome] = useState(false); // Start as false
+  
+  useEffect(() => {
+    // Check if first time user
+    const hasVisited = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisited) {
+      setShowWelcome(true);
+    }
+  }, []);
+
+  const handleWelcomeSubmit = () => {
+    localStorage.setItem('hasVisitedBefore', 'true');
+    setShowWelcome(false);
+  };
 
   // Usar useApi para traer la data de la despensa
+  const [pantryItems, setPantryItems] = useState([]);
   const api = useApi();
   const { tokenReady } = useToken(); 
   const [dataFetched, setDataFetched] = useState(false);
@@ -73,13 +89,13 @@ export default function HomePage() {
   }, [tokenReady, dataFetched]);
 
 
-  useApi()
-  return ( 
-  <div className="generalContainer flex">
-
-    <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
-
-    <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
+  return (
+    <div className="generalContainer flex">
+      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px]">
+        {showWelcome && (
+          <WelcomePopUp onSubmitSuccess={handleWelcomeSubmit} />
+        )}
       <h1 className="text-4xl text-[#182F40]">Bienvenido/a, Dafne!</h1>
 
       {/*Data Cards*/}
