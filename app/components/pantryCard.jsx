@@ -96,18 +96,20 @@ export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightR
   };
 
   return (
-    <div className="generalContainer flex flex-col"
+    <div className="flex flex-col generalContainer"
       style={{ width: boxWidth }}>
-      <div className={`container bg-[#A3BE8C] flex flex-col rounded-[20px] h-[${boxHeight}px] text-[#182F40]`}>          
+      <div
+        className={`container bg-[#A3BE8C] flex flex-col rounded-[20px] h-[${boxHeight}px] text-[#182F40]`}
+        data-testid="pantry-card">
         <div className="flex justify-center w-full pb-0 mb-0">
-          <h3 className="text-3xl font-bold my-6">Despensa</h3>
+          <h3 className="my-6 text-3xl font-bold">Despensa</h3>
         </div>
-        <div className="items-container overflow-hidden flex-1 relative">
+        <div className="relative flex-1 overflow-hidden items-container">
           <div className="flex flex-row h-full transition-transform duration-300 ease-in-out"
                style={{ transform: `translateX(-${currentPage * 100}%)` }}>
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <div key={pageIndex} 
-                className="flex-none w-full flex justify-center items-start pt-2 px-4" // Changed justify-start to justify-center
+                className="flex items-start justify-center flex-none w-full px-4 pt-2" // Changed justify-start to justify-center
                 style={{ width: boxWidth }}>
                 <div className="flex flex-row justify-center w-full max-w-[80%]"> {/* Added container for centering */}
                 <div className="leftRow flex flex-col items-end font-bold pr-[40px]">
@@ -139,7 +141,7 @@ export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightR
                 })}
               </div>
 
-              <div className="rightRow flex flex-col items-start">
+              <div className="flex flex-col items-start rightRow">
                 {rightRowInfo.slice(
                   pageIndex * ITEMS_PER_PAGE,
                   (pageIndex + 1) * ITEMS_PER_PAGE
@@ -156,8 +158,9 @@ export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightR
         </div>
 
         {/* Navigation Controls */}
-        <div className="flex justify-between items-center px-4 py-2">
+        <div className="flex items-center justify-between px-4 py-2">
         <button 
+          data-testid="prev-button"
           onClick={handlePrevPage}
           disabled={currentPage === 0}
           className={`p-2 rounded-full ${
@@ -192,6 +195,7 @@ export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightR
           </div>
 
           <button 
+            data-testid="next-button"
             onClick={handleNextPage}
             disabled={currentPage === totalPages - 1}
             className={`p-2 rounded-full ${
@@ -207,8 +211,9 @@ export default function PantryCard({boxWidth, boxHeight=450, leftRowInfo, rightR
         </div>
       </div>
 
-      <div className="botContainer flex flex-col justify-center items-center pb-6 pt-5">
+      <div className="flex flex-col items-center justify-center pt-5 pb-6 botContainer">
         <button 
+          data-testid="save-or-edit-button"
           className="EditPantryButton flex justify-center items-center bg-[#4F378B] hover:bg-[#7461AC] w-[200px] h-[50px] rounded-[16px] text-[#FFFFFF] hover:text-[#FFFFFF] mt-[10px]"
           onClick={isEditing ? handleSavePantry : handleEditPantry}
         >
