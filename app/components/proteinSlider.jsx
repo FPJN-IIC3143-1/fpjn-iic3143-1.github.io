@@ -1,10 +1,9 @@
-
+import React from 'react';
 
 export default function ProteinSlider() {
 
-  return (<>
-    
-  <div className="flex flex-col">
+  return (<>    
+  <div className="flex flex-col" data-testid="protein-slider">
     <div className="flex justify-between mb-[8px]">
       <p>Proteina a ingerir</p>
       <p>0 - 200 g</p>
