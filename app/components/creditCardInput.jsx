@@ -73,7 +73,7 @@ export default function CreditCardInput({ cardInfo, onCardInfoChange, errors, se
             value={cardInfo.number}
             onChange={handleInputChange}
             onFocus={(e) => setFocus(e.target.name)}
-            className="w-full mt-1 p-2 rounded focus:ring-2 text-black focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
+            className="w-full mt-1 p-2 rounded focus:ring-2 text-black bg-gray-50 focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
             required
           />
           {errors?.number && <span className="text-red-400 text-sm">{errors.number}</span>}
@@ -87,7 +87,7 @@ export default function CreditCardInput({ cardInfo, onCardInfoChange, errors, se
             value={cardInfo.name}
             onChange={handleInputChange}
             onFocus={(e) => setFocus(e.target.name)}
-            className="w-full mt-1 p-2 rounded focus:ring-2 text-black focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
+            className="w-full mt-1 p-2 rounded focus:ring-2 text-black bg-gray-50 focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
             required
           />
           {errors?.cardName && <span className="text-red-400 text-sm">Ingrese nombre como aparece en la tarjeta</span>}
@@ -100,7 +100,7 @@ export default function CreditCardInput({ cardInfo, onCardInfoChange, errors, se
             value={cardInfo.originalExpiry || ''} // Use original YYYY-MM format for input
             onChange={handleInputChange}
             onFocus={(e) => setFocus(e.target.name)}
-            className="w-full mt-1 p-2 rounded focus:ring-2 text-black focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
+            className="w-full mt-1 p-2 rounded focus:ring-2 text-black bg-gray-50 focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
             required
             min={new Date().toISOString().slice(0, 7)}
           />
@@ -116,7 +116,7 @@ export default function CreditCardInput({ cardInfo, onCardInfoChange, errors, se
             value={cardInfo.cvc}
             onChange={handleInputChange}
             onFocus={(e) => setFocus(e.target.name)}
-            className="w-full mt-1 p-2 rounded focus:ring-2 text-black focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
+            className="w-full mt-1 p-2 rounded focus:ring-2 text-black bg-gray-50 focus:ring-[#D0BCFE] hover:bg-[#F5F5F5]"
             required
           />
           {errors?.cvc && <span className="text-red-400 text-sm">{errors.cvc}</span>}

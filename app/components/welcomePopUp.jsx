@@ -88,11 +88,11 @@ export default function WelcomePopUp({ onSubmitSuccess }) {
                 </label>
                 <label className="text-gray-300 mt-2 mr-2">
                   Nombre:
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full mt-1 p-2 rounded text-black" />
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full mt-1 p-2 rounded bg-gray-100 text-black" />
                 </label>
                 <label className="text-gray-300 mt-2 mr-2">
                   Apellido:
-                  <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="w-full mt-1 p-2 rounded text-black" />
+                  <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required className="w-full mt-1 p-2 rounded bg-gray-100 text-black" />
                 </label>
                 <CreditCardInput 
                   cardInfo={cardInfo} 
