@@ -1,11 +1,11 @@
-
+import React from 'react';
 
 
 export default function LandingButton({ bgColor, textColor, boxWidth, text, onClick}) {
-  console.log('onClick prop:', onClick);
   return <>
   
   <button 
+    data-testid="landing-button"
     className="landing-button-box flex justify-center items-center h-[72px] rounded-[60px] 
     text-4xl shadow-landingButton transition-colors duration-300"
     style={{ backgroundColor: bgColor, color: textColor, width: boxWidth }}
