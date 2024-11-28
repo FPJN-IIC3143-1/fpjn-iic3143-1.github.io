@@ -1,7 +1,7 @@
 import { useNavigate } from '@remix-run/react';
 import RecipePopUp from './recipePopUp';
 
-export default function RecipeCard({N, leftRowInfo, rightRowInfo}) {
+export default function RecipeCard({N, recipeName, leftRowInfo, rightRowInfo}) {
   const navigate = useNavigate();
   
 
@@ -9,11 +9,14 @@ export default function RecipeCard({N, leftRowInfo, rightRowInfo}) {
     navigate('./make-recipe');
   }
 
-
+  // We only show the first 4 ingredients as a preview in this card
+  leftRowInfo = leftRowInfo.slice(0, 4);
+  rightRowInfo = rightRowInfo.slice(0, 4);
+  
   return (
     <div className='recipe-card flex flex-col items-center'>
       <div className='title text-[#182F40] text-4xl font-bold'> Receta {N} </div>
-      <div className='subtitle text-[#182F40] text-2xl w-[310px] text-center'>Arroz con pollo al pesto</div>
+      <div className='subtitle text-[#182F40] text-2xl w-[310px] text-center'>{recipeName}</div>
 
 
       <div className="container bg-[#A3BE8C] flex flex-col rounded-[20px] text-[#182F40] w-[320px] mt-[20px]">

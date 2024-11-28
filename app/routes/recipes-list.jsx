@@ -16,9 +16,9 @@ export default function RecipiesList() {
 
         <div className="flex justify-center ">
         <div className='RecipeCardsContaine flex mt-[120px] w-[1200px] justify-around'>
-          <RecipeCard N={1} leftRowInfo={["600g", "600g", "600g", "600g"]} rightRowInfo={["Pollo", "Yogurt Natural", "Albahaca", "Queso parmesano president"]} />
-          <RecipeCard N={2} leftRowInfo={["600g", "600g", "600g", "600g"]} rightRowInfo={["Pollo", "Yogurt Natural", "Albahaca", "Queso parmesano president"]} />
-          <RecipeCard N={3} leftRowInfo={["600g", "600g", "600g", "600g"]} rightRowInfo={["Pollo", "Yogurt Natural", "Albahaca", "Queso parmesano president"]} />
+          <RecipeCard N={1} recipeName={"Arroz con pollo al pesto"} leftRowInfo={["6g", "60g", "600g", "6000g"]} rightRowInfo={["Pollo", "Yogurt Natural", "Albahaca", "Queso parmesano president"]} />
+          <RecipeCard N={2} recipeName={"Arroz con pollo al pesto"} leftRowInfo={["6g", "60g", "600g"]} rightRowInfo={["Pollo", "Yogurt Natural", "Albahaca"]} />
+          <RecipeCard N={3} recipeName={"Arroz con pollo greco"} leftRowInfo={["7g", "200g", "540g", "2000g", "300g"]} rightRowInfo={["Pollo", "Yogurt Natural", "Jamón Serrano", "Queso parmesano president", "Nueces"]} />
         </div>
         </div>
         {/* Background images and Logo */}
