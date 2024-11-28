@@ -104,7 +104,7 @@ export default function SideBar({ userName }) {
       <button className="RecipiesGenerator-text mt-[25px] text-white" 
       onMouseEnter={mouseEnteranimation} 
       onMouseLeave={mouseLeaveanimation}
-      onClick={() => navigate("/recipies-generator", {replace: true})}
+      onClick={() => navigate("/recipes-generator", {replace: true})}
       >
       Generador de Recetas
       </button>

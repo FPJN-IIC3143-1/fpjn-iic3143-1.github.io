@@ -13,7 +13,7 @@ export default function RecipePopUp({ num = 0, title = '', ingredients = [], ste
 
   return (
     <>
-      <button className="RecipeButton bg-[#4F378B] hover:bg-[#D0BCFE] w-[220px] h-[53px] rounded-[16px] text-[#EADDFF] hover:text-[#381E72]"
+      <button className="RecipeButton bg-[#4F378B] hover:bg-[#7461AC] w-[220px] h-[53px] rounded-[16px] text-[#FFFFFF] hover:text-[#FFFFFF]"
         onClick={handleOpenPopUp}>
         Ver Receta Completa
       </button>
