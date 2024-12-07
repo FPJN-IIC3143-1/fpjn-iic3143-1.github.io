@@ -25,28 +25,28 @@ export const links = () => [
 
 export default function App() {
   return (
-    <Auth0Provider
-      domain={import.meta.env.VITE_AUTH0_DOMAIN}
-      clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
-      authorizationParams={{
-        redirect_uri: import.meta.env.VITE_REDIRECT_URI,
-        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-        scope: "openid profile email",
-      }}
-    >
-      <TokenProvider>
-        <html lang="en">
-          <head>
-            <Meta />
-            <Links />
-          </head>
-          <body>
+    <html lang="en">
+      <head>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <Auth0Provider
+          domain={import.meta.env.VITE_AUTH0_DOMAIN}
+          clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+          authorizationParams={{
+            redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+            scope: "openid profile email",
+          }}
+        >
+          <TokenProvider>
             <Outlet />
-            <ScrollRestoration />
-            <Scripts />
-          </body>
-        </html>
-      </TokenProvider>
-    </Auth0Provider>
+          </TokenProvider>
+        </Auth0Provider>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
   );
 }
