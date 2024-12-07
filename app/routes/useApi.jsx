@@ -166,6 +166,10 @@ export default function useApi() {
         return await apiCall('/pantry/updatePantry', 'POST', body);
     }
 
+    // Export History
+    const exportRecipeConsumptionHistory = async () => {
+        return await apiCall('/history/export', 'GET'); // TODO: Modificar el endpoint con back!
+      };
 
 
     return {
@@ -183,7 +187,8 @@ export default function useApi() {
         getPantry,
         addIngredientsToPantry,
         removeIngredientsFromPantry,
-        updatePantry
+        updatePantry,
+        exportRecipeConsumptionHistory,
 
     };
 }

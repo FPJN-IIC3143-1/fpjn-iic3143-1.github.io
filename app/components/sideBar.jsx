@@ -5,6 +5,7 @@ import arrowLeft from '/images/arrow-left-circle.png';
 import arrowRight from '/images/arrow-right-circle.png';
 import { useNavigate } from '@remix-run/react';
 import useApi from '../routes/useApi';
+import ExportHistoryButton from './exportHistoryButton';
 
 export default function SideBar({ userName }) {
 
@@ -142,7 +143,7 @@ export default function SideBar({ userName }) {
       onClick={() => navigate("/history")}
       >Alimentos Consumidos</button>
 
-
+      <ExportHistoryButton />
 
 
       <div className="Separator h-[200px]"></div> 
