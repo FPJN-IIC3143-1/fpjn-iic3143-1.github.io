@@ -168,7 +168,7 @@ export default function useApi() {
 
     // Export History
     const exportRecipeConsumptionHistory = async () => {
-        return await apiCall('/history/export', 'GET'); // TODO: Modificar el endpoint con back!
+        return await apiCall('/history/export', 'GET');
       };
 
 
