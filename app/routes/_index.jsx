@@ -10,6 +10,7 @@ export const meta = () => {
 
 export default function Index() { 
   const { loginWithRedirect, } = useAuth0();
+  const signupUrl = `https://dev-wflfbqz11clqgo3r.us.auth0.com/authorize?client_id=ieG8oeU4dp2vfgkCYXeA7bfT6QRJUf8t&redirect_uri=http://localhost:5173/homepage&scope=openid%20profile%20email&response_type=code&screen_hint=signup&prompt=login`;
   
 
   return ( 
@@ -30,7 +31,7 @@ export default function Index() {
               boxWidth={428} 
               text="Regístrate" 
               onClick={() => {
-                loginWithRedirect({ screen_hint: 'signup' });
+                window.location.href = signupUrl;
               }}
             />
             <LandingButton 
@@ -39,7 +40,9 @@ export default function Index() {
               boxWidth={319} 
               text="Iniciar Sesión" 
               onClick={() => {
-                loginWithRedirect();
+                loginWithRedirect({
+                  prompt: 'login'
+                });
               }}
             />
          
