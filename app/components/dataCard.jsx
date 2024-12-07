@@ -1,4 +1,4 @@
-export default function DataCard({boxWidth, page="homepage", leftRowInfo, rightRowInfo}) {
+export default function DataCard({boxWidth, page='homepage', leftRowInfo, rightRowInfo}) {
 
     return (
       <>
@@ -13,7 +13,7 @@ export default function DataCard({boxWidth, page="homepage", leftRowInfo, rightR
                 `${leftInfo} kcal` : 
                 (page === 'homepage' || page === 'history' ? 
                   `${leftInfo} g` : 
-                  {leftInfo}
+                  leftInfo
                 )
               }
             </div>
