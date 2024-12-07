@@ -36,46 +36,9 @@ export default function RecipiesGenerator() {
     }
     setLoading(true);
     try {
-      const mockRecipes = {
-        results: [
-          {
-            id: 716406,
-            title: "Asparagus and Pea Soup: Real Convenience Food",
-            image: "https://img.spoonacular.com/recipes/716406-312x231.jpg",
-            imageType: "jpg",
-          },
-          {
-            id: 644387,
-            title: "Garlicky Kale",
-            image: "https://img.spoonacular.com/recipes/644387-312x231.jpg",
-            imageType: "jpg",
-          },
-          {
-            id: 716426,
-            title: "Cauliflower, Brown Rice, and Vegetable Fried Rice",
-            image: "https://img.spoonacular.com/recipes/716426-312x231.jpg",
-            imageType: "jpg",
-          },
-          {
-            id: 715769,
-            title: "Broccolini Quinoa Pilaf",
-            image: "https://img.spoonacular.com/recipes/715769-312x231.jpg",
-            imageType: "jpg",
-          },
-          {
-            id: 663559,
-            title: "Tomato and lentil soup",
-            image: "https://img.spoonacular.com/recipes/663559-312x231.jpg",
-            imageType: "jpg",
-          },
-        ],
-        offset: 0,
-        number: 5,
-        totalResults: 649,
-      };
-      
-      // const recipes = await api.getRecipes();
-      navigate("/recipes-list", { state: { recipes: mockRecipes.results } });
+      const recipes = await api.getRecipes();
+      console.log(recipes)
+      navigate("/recipes-list", { state: { recipes: recipes.results } });
     } catch (error) {
       console.error("Failed to fetch recipes:", error);
     } finally {

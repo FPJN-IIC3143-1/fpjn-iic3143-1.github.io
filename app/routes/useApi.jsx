@@ -60,8 +60,42 @@ export default function useApi() {
 
 
      // Recipes
-    const getRecipes = async () => {
-        return await apiCall('/recipes', 'GET');
+     const getRecipes = async () => {
+        try {
+            const preferences = await getPreferences();
+            if (!preferences.success) {
+                console.warn("Failed to fetch preferences. Fetching without preferences.");
+            }
+    
+            let { diet, intolerances } = preferences;
+    
+            if (typeof diet === "string" && diet.includes(",")) {
+                diet = diet.split(","); 
+            }
+            if (typeof intolerances === "string" && intolerances.includes(",")) {
+                intolerances = intolerances.split(",");
+            }
+    
+            const query = new URLSearchParams();
+    
+            if (diet && Array.isArray(diet) && diet.length > 0) {
+                query.append("diet", diet[0]); 
+            } else if (diet && typeof diet === "string") {
+                query.append("diet", diet); 
+            }
+    
+            if (intolerances && Array.isArray(intolerances)) {
+                query.append("intolerances", intolerances.join(","));
+            }
+    
+            const url = `/recipes?${query.toString()}`;
+            console.log("Fetching recipes from URL:", url);
+    
+            return await apiCall(url, "GET");
+        } catch (error) {
+            console.error("Error in getRecipes:", error.message);
+            return { success: false, recipes: [] };
+        }
     };
 
     const getRecipeInformation = async (recipeId) => {
