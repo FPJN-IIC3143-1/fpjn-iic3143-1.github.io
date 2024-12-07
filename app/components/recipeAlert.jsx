@@ -25,7 +25,7 @@ export default function RecipeAlert({ title, onConfirm, onClose }) {
             onClick={onConfirm}
             className="w-[160px] h-[50px] bg-black text-white rounded-[12px] text-center hover:bg-gray-800"
           >
-            Descontar
+            Agregar
           </button>
           <button
             onClick={onClose}

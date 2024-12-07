@@ -10,7 +10,7 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { getRecipeInformation } = useApi();
+  const { getRecipeInformation, registerRecipeConsumption} = useApi();
 
   const handlePopupOpen = async () => {
     setLoading(true);
@@ -31,9 +31,16 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
     setShowAlert(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setShowAlert(false);
-    console.log("Confirmed 'Hacer Receta'");
+    try {
+      const response = await registerRecipeConsumption(recipeId);
+      console.log(response);
+      alert(`${response.message}`);
+    } catch (err) {
+      alert(`Error al registrar la receta: ${err.message}`);
+      console.error(err.message);
+    }
   };
 
   const handleCloseAlert = () => {
@@ -97,7 +104,7 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
       {/* Render RecipeAlert for "Hacer Receta" */}
       {showAlert && (
         <RecipeAlert
-          title="Descontar alimentos de la despensa y contarlos en los macros"
+          title="Agregar Receta a Historial"
           onConfirm={handleConfirm}
           onClose={handleCloseAlert}
         />
