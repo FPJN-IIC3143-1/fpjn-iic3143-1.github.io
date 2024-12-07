@@ -12,8 +12,6 @@ import useApi from './useApi';
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom";
 
-
-const userName = { Name: "Dafne", LastName: "Arriagada" };
 const headerText = "Con hambre? busca una ... ";
 const headerSpanText = "Receta";
 const firstParagraphText = "Te entregamos un listado de recetas que cumplen ";
@@ -48,7 +46,7 @@ export default function RecipiesGenerator() {
 
   return (
     <div className="generalContainer flex">
-      <SideBar userName={userName} />
+      <SideBar />
       <div className="ContainerBody relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0] overflow-y-hidden">
         <h1 className="text-3xl text-[#182F40] font-bold">
           {headerText}<span className="text-7xl font-extralight">{headerSpanText}</span>
