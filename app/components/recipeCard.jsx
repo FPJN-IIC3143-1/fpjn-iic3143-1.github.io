@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RecipePopUp from "./recipePopUp";
-import RecipeAlert from "./RecipeAlert";
+import RecipeAlert from "./recipeAlert";
 
 export default function RecipeCard({ N, recipeName, imageUrl }) {
   const [showPopup, setShowPopup] = useState(false);
