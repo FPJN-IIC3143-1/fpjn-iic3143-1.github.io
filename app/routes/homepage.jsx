@@ -6,6 +6,7 @@ import {
   // ScrollRestoration,
 } from "@remix-run/react";
 
+import { useAuth0 } from "@auth0/auth0-react";
 import SideBar from "../components/sideBar"; 
 import DataCard from "../components/dataCard";
 import PantryCard from "../components/pantryCard";
@@ -19,6 +20,7 @@ export default function HomePage() {
   const api = useApi();
   useApi();
   // Checkear si el usuario está autenticado
+  const { user } = useAuth0();
   const [showWelcome, setShowWelcome] = useState(false); // Start as false
   const [pantryItems, setPantryItems] = useState([]);
   const { tokenReady } = useToken(); 
@@ -90,12 +92,14 @@ export default function HomePage() {
 
   return (
     <div className="generalContainer flex">
-      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <SideBar/>
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px]">
         {showWelcome && (
           <WelcomePopUp onSubmitSuccess={handleWelcomeSubmit} />
         )}
-      <h1 className="text-4xl text-[#182F40]">Bienvenido/a, Dafne!</h1>
+      <h1 className="text-4xl text-[#182F40]">
+          Bienvenido/a, {user ? user.given_name : "Cargando..."}!
+        </h1>
 
       {/*Data Cards*/}
 

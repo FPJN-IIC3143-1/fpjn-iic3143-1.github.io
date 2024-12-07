@@ -16,7 +16,7 @@ export default function History() {
  
   return (
     <div className="flex">
-      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <SideBar/>
 
       <div className="relative h-[1100px] grow bg-[#E5E9F0] p-10 z-[0]">
         

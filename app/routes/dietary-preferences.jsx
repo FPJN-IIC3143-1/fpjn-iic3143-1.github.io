@@ -63,7 +63,7 @@ export default function DietaryPreferences() {
 
   return (
     <div className="GeneralContainer flex">
-      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <SideBar />
 
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] pl-[100px] z-[0]">
         <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tú decides...</div>

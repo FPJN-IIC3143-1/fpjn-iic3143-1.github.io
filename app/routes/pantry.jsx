@@ -182,7 +182,7 @@ export default function Pantry() {
 
   return (
     <div className="generalContainer flex">
-      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <SideBar/>
 
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0]">
 
