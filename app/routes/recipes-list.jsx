@@ -27,6 +27,7 @@ export default function RecipiesList() {
                   N={index + 1}
                   recipeName={recipe.title}
                   imageUrl={recipe.image}
+                  recipeId={recipe.id}
                 />
               ))
             ) : (
