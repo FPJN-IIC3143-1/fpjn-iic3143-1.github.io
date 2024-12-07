@@ -8,7 +8,6 @@ import {
 
 import SideBar from "../components/sideBar"; 
 import DataCard from "../components/dataCard";
-import PantryCard from "../components/pantryCard";
 import NotificationLogOut from "../components/notificationLogOut";
 import WelcomePopUp from "../components/welcomePopUp";
 import useApi from "./useApi";
@@ -20,7 +19,8 @@ export default function HomePage() {
   useApi();
   // Checkear si el usuario está autenticado
   const [showWelcome, setShowWelcome] = useState(false); // Start as false
-  const [pantryItems, setPantryItems] = useState([]);
+  const [consumedMacros, setConsumedMacros] = useState([]);
+  const [goalMacros, setGoalMacros] = useState([]);
   const { tokenReady } = useToken(); 
   const [dataFetched, setDataFetched] = useState(false);
   
@@ -37,55 +37,27 @@ export default function HomePage() {
     setShowWelcome(false);
   };
 
-  // Usar useApi para traer la data de la despensa
-  const handlePantryChange = (pantryData) => {
-    if (pantryData && pantryData.length > 0) {
-      let ingredients = pantryData[0].ingredients;
-  
-      // Combine duplicate ingredients
-      const combinedIngredients = ingredients.reduce((acc, curr) => {
-        const existingItem = acc.find(item => 
-          item.name.toLowerCase() === curr.name.toLowerCase() && 
-          item.quantity.unit === curr.quantity.unit
-        );
-  
-        if (existingItem) {
-          existingItem.quantity.amount += curr.quantity.amount;
-        } else {
-          acc.push({
-            ...curr,
-            name: curr.name.charAt(0).toUpperCase() + curr.name.slice(1).toLowerCase() // Capitalize first letter
-          });
-        }
-        return acc;
-      }, []);
-  
-      // Sort ingredients alphabetically
-      const sortedIngredients = combinedIngredients.sort((a, b) => 
-        a.name.localeCompare(b.name)
-      );
-  
-      setPantryItems(sortedIngredients);
-    }
-  };
 
   useEffect(() => { 
+  
+  if (tokenReady && !dataFetched) {
+    console.log("Token is ready, fetching data...");
+    
+    Promise.all([api.getDailyGoal()])
+      .then(([dailyGoalData]) => {
+        console.log("Fetched Macros Data:", dailyGoalData);
+        if (dailyGoalData && Object.keys(dailyGoalData).length > 0) {
+          setConsumedMacros(dailyGoalData["consumed"]);
+          setGoalMacros(dailyGoalData["goal"]);  
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error.message);
+      });
 
-    if (tokenReady && !dataFetched) {
-      console.log("Token is ready, fetching data...");
-      
-      Promise.all([api.getPantry()])
-        .then(([pantryData]) => {
-          console.log("Fetched Pantry Data:", pantryData);
-          handlePantryChange(pantryData);
-        })
-        .catch(error => {
-          console.error("Error fetching data:", error.message);
-        });
-
-      setDataFetched(true);
+    setDataFetched(true);
     }
-  }, [tokenReady, dataFetched]);
+  }, [tokenReady, dataFetched, api]);
 
 
   return (
@@ -99,26 +71,20 @@ export default function HomePage() {
 
       {/*Data Cards*/}
 
-      <div className="macros&pantryBox flex pt-[100px] justify-evenly">
+      <div className="macros&progressBox flex pt-[100px] justify-evenly">
         <div className="macrosBox flex flex-col items-center ">
-          <div className="text-3xl text-[#182F40] font-bold pb-[5px]">Macros de hoy</div>
-          <DataCard boxWidth={340} leftRowInfo={["80g", "200g", "50g", "2013kcal"]} rightRowInfo={["Proteínas", "Carbohidratos", "Grasas", "Calorías"]} />
+          <div className="text-3xl text-[#182F40] font-bold pb-[10px]">Progreso de hoy</div>
+          <DataCard boxWidth={340} leftRowInfo={[consumedMacros["protein"], consumedMacros["carbs"], consumedMacros["fats"], consumedMacros["calories"]]} rightRowInfo={["Proteínas", "Carbohidratos", "Grasas", "Calorías"]} />
           <div className="h-[20px]"></div>
         </div>
-        <PantryCard 
-          boxWidth={340}
-          boxHeight={350} 
-          leftRowInfo={pantryItems.map((item) => (
-            `${item.quantity.amount} ${item.quantity.unit}`
-          ))}
-          rightRowInfo={pantryItems.map((item) => item.name)}
-          api={api}
-          onPantryUpdate={handlePantryChange}
-          ITEMS_PER_PAGE={5}
-        />
+        <div className="ProgressBox flex flex-col items-center ">
+          <div className="text-3xl text-[#182F40] font-bold pb-[10px]">Metas de hoy</div>
+          <DataCard boxWidth={340} leftRowInfo={[goalMacros["protein"], goalMacros["carbs"], goalMacros["fats"], goalMacros["calories"]]} rightRowInfo={["Proteínas", "Carbohidratos", "Grasas", "Calorías"]} />
+          <div className="h-[20px]"></div>
+        </div>
       </div>
 
-        <div className="notificationsBox flex flex-col w-full items-center pt-[10px]">
+        <div className="notificationsBox flex flex-col w-full items-center mt-[100px]">
 
           <div className="flex justify-start w-[830px]">
             <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px]">Últimas notificaciones</div>
