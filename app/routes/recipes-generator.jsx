@@ -6,6 +6,12 @@ import PurpleButton from "../components/purpleButton";
 import DataCard from "../components/dataCard"
 import NotificationLogOut from "../components/notificationLogOut";
 import ellipseBackground from '/images/ellipse-background.png';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useToken } from './tokenContext';
+import useApi from './useApi';
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom";
+
 
 const userName = { Name: "Dafne", LastName: "Arriagada" };
 const headerText = "Con hambre? busca una ... ";
@@ -14,18 +20,68 @@ const firstParagraphText = "Te entregamos un listado de recetas que cumplen ";
 const spanParagraphText = "casi perfectamente ";
 const lastParagraphText = "tus requisitos";
 
+
 export default function RecipiesGenerator() {
-
-  const getRecipeHandler = () => {
-    console.log("Solicitar receta");
-    // GET /recipes?diet=vegan&intolerances=peanut,soy,egg
-
-    
-
-
-  }
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const api = useApi();
+  const { tokenReady } = useToken();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
 
+  const getRecipeHandler = async () => {
+    if (!tokenReady) {
+      console.error("Token not ready. Please wait...");
+      return;
+    }
+    setLoading(true);
+    try {
+      const mockRecipes = {
+        results: [
+          {
+            id: 716406,
+            title: "Asparagus and Pea Soup: Real Convenience Food",
+            image: "https://img.spoonacular.com/recipes/716406-312x231.jpg",
+            imageType: "jpg",
+          },
+          {
+            id: 644387,
+            title: "Garlicky Kale",
+            image: "https://img.spoonacular.com/recipes/644387-312x231.jpg",
+            imageType: "jpg",
+          },
+          {
+            id: 716426,
+            title: "Cauliflower, Brown Rice, and Vegetable Fried Rice",
+            image: "https://img.spoonacular.com/recipes/716426-312x231.jpg",
+            imageType: "jpg",
+          },
+          {
+            id: 715769,
+            title: "Broccolini Quinoa Pilaf",
+            image: "https://img.spoonacular.com/recipes/715769-312x231.jpg",
+            imageType: "jpg",
+          },
+          {
+            id: 663559,
+            title: "Tomato and lentil soup",
+            image: "https://img.spoonacular.com/recipes/663559-312x231.jpg",
+            imageType: "jpg",
+          },
+        ],
+        offset: 0,
+        number: 5,
+        totalResults: 649,
+      };
+      
+      // const recipes = await api.getRecipes();
+      navigate("/recipes-list", { state: { recipes: mockRecipes.results } });
+    } catch (error) {
+      console.error("Failed to fetch recipes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="generalContainer flex">
@@ -37,10 +93,11 @@ export default function RecipiesGenerator() {
 
         <div className="slider&parragraph flex justify-evenly text-[#182F40] mt-[60px]">
           <div className="flex flex-col justify-between items-center">
-            <ProteinSlider/>
-            <PurpleButton 
-              text={"Solicita una receta"}
+            <ProteinSlider />
+            <PurpleButton
+              text={loading ? "Cargando..." : "Solicita una receta"}
               onClick={getRecipeHandler}
+              disabled={loading}
             />
           </div>
 
