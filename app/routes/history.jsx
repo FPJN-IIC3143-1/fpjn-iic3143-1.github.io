@@ -67,13 +67,13 @@ export default function History() {
           {/* Macronutrient Cards */}
           <div className="flex grow justify-evenly max-w-[1000px]">
             {[
-              { label: "Esta semana", leftInfo: ["0.5", "2", "400g", "230g", "20g"], rightInfo: ["Broccoli", "Tomates", "Vacuno", "Arroz", "Chía"] },
-              { label: "Semana pasada", leftInfo: ["0.5", "2", "400g", "230g", "20g"], rightInfo: ["Broccoli", "Tomates", "Vacuno", "Arroz", "Chía"] },
-              { label: "Este mes", leftInfo: ["0.5", "2", "400g", "230g", "20g"], rightInfo: ["Broccoli", "Tomates", "Vacuno", "Arroz", "Chía"] },
+              { label: "Esta semana", leftInfo: ["0.5", "2", "400", "230"], rightInfo: ["Broccoli", "Tomates", "Vacuno", "Arroz"] },
+              { label: "Semana pasada", leftInfo: ["0.5", "2", "400", "230"], rightInfo: ["Broccoli", "Tomates", "Arroz", "Chía"] },
+              { label: "Este mes", leftInfo: ["0.5", "2", "400", "230"], rightInfo: ["Tomates", "Vacuno", "Arroz", "Chía"] },
             ].map((item, index) => (
               <div key={index} className='flex flex-col items-center'>
                 <div className="text-2xl mb-[10px] font-bold text-[#182F40]">{item.label}</div>
-                  <DataCard boxWidth={220} leftRowInfo={item.leftInfo} rightRowInfo={item.rightInfo}/>
+                  <DataCard boxWidth={220} page='history' leftRowInfo={item.leftInfo} rightRowInfo={item.rightInfo}/>
               </div>
             ))}
           </div>

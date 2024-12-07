@@ -72,13 +72,13 @@ export default function RecipiesGenerator() {
         <div className="flex justify-evenly text-[#182F40] mt-[100px]">
           <div className="flex flex-col items-center">
             <div className="text-3xl font-bold mb-[15px]">Últimas recetas</div>
-            <DataCard useHearts={true} boxWidth={470} leftRowInfo={["Almuerzo", "Desayuno", "Desayuno", "Cena"]} rightRowInfo={["Arroz con pollo al pesto", "Yogurt con semillas y frutas", "Smoothie rojo", "Ensalada de Quinoa"]} />
+            <DataCard page='recipes-generator' boxWidth={470} leftRowInfo={["Almuerzo", "Desayuno", "Desayuno", "Cena"]} rightRowInfo={["Arroz con pollo al pesto", "Yogurt con semillas y frutas", "Smoothie rojo", "Ensalada de Quinoa"]} />
             <div className="h-[20px]"></div>
             <SearchBar/>
           </div>
           <div className="flex flex-col items-center">
             <div className="text-3xl font-bold mb-[15px]">Recetas favoritas</div>
-            <DataCard useHearts={true} boxWidth={470} leftRowInfo={["Almuerzo", "Desayuno", "Desayuno", "Cena"]} rightRowInfo={["Arroz con pollo al pesto", "Yogurt con semillas y frutas", "Smoothie rojo", "Ensalada de Quinoa"]} />
+            <DataCard page='recipes-generator' boxWidth={470} leftRowInfo={["Almuerzo", "Desayuno", "Desayuno", "Cena"]} rightRowInfo={["Arroz con pollo al pesto", "Yogurt con semillas y frutas", "Smoothie rojo", "Ensalada de Quinoa"]} />
             <div className="h-[20px]"></div>
             <SearchBar/>
           </div>
