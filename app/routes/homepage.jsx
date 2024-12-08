@@ -16,6 +16,10 @@ export default function HomePage() {
   const { tokenReady } = useToken();
   const [dataFetched, setDataFetched] = useState(false);
 
+  const [notificationsData, setNotificationsData] = useState([]);
+
+  
+
   useEffect(() => {
     // Check if first-time user
     const hasVisited = localStorage.getItem('hasVisitedBefore');
@@ -56,6 +60,7 @@ export default function HomePage() {
         });
     }
   }, [tokenReady, dataFetched, api]);
+
 
   return (
     <div className="generalContainer flex">
@@ -119,8 +124,11 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+
           </div>
         </div>
+      </div>
+
 
         <img src="/images/ellipse-background.png" alt="elipse" className="absolute top-[50%] left-[50%] z-[-1]" />
         <img src="/images/logo-sin-texto.png" alt="elipse" className="fixed top-[83%] left-[90%]" />
