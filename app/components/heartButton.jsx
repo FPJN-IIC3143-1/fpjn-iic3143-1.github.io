@@ -5,7 +5,7 @@ export default function HeartButton({ isFavorite, onToggle }) {
     <button
       onClick={onToggle}
       className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300 ${
-        isFavorite ? "bg-purple-500 text-white" : "bg-gray-200 text-gray-500"
+        isFavorite ? "bg-[#4F378B] text-white" : "bg-gray-200 text-gray-500"
       }`}
       aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
     >
