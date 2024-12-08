@@ -56,7 +56,6 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
     <div className="recipe-card flex flex-col items-center">
       <div className="title text-[#182F40] text-4xl font-bold">Receta {N}</div>
 
-      {/* Green Background Container */}
       <div className="container bg-[#A3BE8C] flex flex-col rounded-[20px] text-[#182F40] w-[320px] mt-4 shadow-lg">
         {/* Recipe Image */}
         <img
