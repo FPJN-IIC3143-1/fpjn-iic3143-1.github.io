@@ -157,10 +157,17 @@ export default function RecipiesGenerator() {
     setLoading(true);
     try {
       const recipes = await api.getRecipes();
-      console.log(recipes);
-      navigate("/recipes-list", { state: { recipes: recipes.results } });
+      console.log("API Response:", recipes);
+  
+      if (recipes.success) {
+        navigate("/recipes-list", { state: { recipes: recipes.results } });
+      } else {
+        console.error("Failed to fetch recipes: Success flag is false");
+        alert("Failed to fetch recipes. Please try again later.");
+      }
     } catch (error) {
       console.error("Failed to fetch recipes:", error);
+      alert("An error occurred while fetching recipes. Please try again later.");
     } finally {
       setLoading(false);
     }
