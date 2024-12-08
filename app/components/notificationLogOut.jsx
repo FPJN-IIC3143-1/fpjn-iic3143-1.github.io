@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import NotisDropdown from "./notificationsDropdown.jsx";
 
+
 export default function NotificationLogOut() {
   const { logout } = useAuth0();
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
+
   const handleNotification = () => {
-    setIsDropdownVisible(!isDropdownVisible); // Alterna la visibilidad del dropdown
-    console.log("Notification clicked");
+    setIsDropdownVisible(!isDropdownVisible);
   };
+
 
   return (
     <>
