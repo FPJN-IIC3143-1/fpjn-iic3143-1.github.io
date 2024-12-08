@@ -104,7 +104,7 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
       {/* Render RecipeAlert for "Hacer Receta" */}
       {showAlert && (
         <RecipeAlert
-          title="Agregar Receta a Historial"
+          title="Descontar alimentos de la despensa y contarlos en los macros"
           onConfirm={handleConfirm}
           onClose={handleCloseAlert}
         />
