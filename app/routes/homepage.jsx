@@ -62,6 +62,15 @@ export default function HomePage() {
   }, [tokenReady, dataFetched, api]);
 
 
+  // MOCK NOTIFICATIONS DATA
+  const notifications = [
+    { date: "09/09/2024", message: "Tus ingredientes frecuentes no están en tu despensa!" },
+    { date: "07/09/2024", message: "No tienes pimiento!" },
+    { date: "07/09/2024", message: "No hay yogurt para tus desayunos" },
+    { date: "07/09/2024", message: "Se agotó el arroz en tu despensa!" }
+  ];
+
+
   return (
     <div className="generalContainer flex">
       <SideBar/>
@@ -89,31 +98,23 @@ export default function HomePage() {
       </div>
 
         <div className="notificationsBox flex flex-col w-full items-center mt-[100px]">
-
-          <div className="flex justify-start w-[830px]">
-            <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px]">Últimas notificaciones</div>
-          </div>
-          
+          <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px] justify-start w-[830px]">Últimas notificaciones</div>
           <div className="notificationsCard bg-[#A3BE8C] flex justify-center items-center h-[170px] rounded-[20px] text-[#182F40] w-[830px]">
-
             <div className="leftRow flex flex-col items-center font-bold pr-[40px] basis-1/5">
-              {["09/09/2024", "07/09/2024", "07/09/2024", "07/09/2024"].map((leftInfo, index) => (
+              {notifications.map((notification, index) => (
                 <div key={index} className="leftItem mt-[5px] mb-[5px]">
-                  {leftInfo}
+                  {notification.date}
                 </div>
               ))}
             </div>
-
             <div className="rightRow flex flex-col items-start basis-3/5">
-              {["Tus ingredientes frecuentes no están en tu despensa!", "No tienes pimiento!", "No hay yogurt para tus desayunos", "Se agotó el arroz en tu despensa!"].map((rightInfo, index) => (
+              {notifications.map((notification, index) => (
                 <div key={index} className="rightRow mt-[5px] mb-[5px]">
-                  {rightInfo}
+                  {notification.message}
                 </div>
               ))}
             </div>
-
           </div>
-
         </div>
 
       
