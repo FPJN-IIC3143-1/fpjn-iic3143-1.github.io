@@ -99,8 +99,17 @@ export default function useApi() {
     };
 
     const getRecipeInformation = async (recipeId) => {
-        return await apiCall(`/recipes/${recipeId}/info`, 'GET');
-    }
+        try {
+          const response = await apiCall(`/recipes/${recipeId}/info`, 'GET');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.error(`Error with GET request to /recipes/${recipeId}/info:`, error.message);
+          throw error;
+        }
+      };
     
     const getRecipeNutrition = async (recipeId) => {
         return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
@@ -115,6 +124,13 @@ export default function useApi() {
         return await apiCall(`/recipes/generateByNutritionalGoals?coverage=${coverage}`, 'GET');
     }
 
+    // ToDo: faltan 3 endpoints ///
+
+    const getLastConsumedRecipes = async () => {
+        return await apiCall('/recipes/lastConsumed?limit=4', 'GET');
+    }
+
+    
 
     // Transbank
 
@@ -178,6 +194,8 @@ export default function useApi() {
         getRecipeNutrition,
         registerRecipeConsumption,
         generateRecipesByNutritionalGoals,
+        // faltan 3 enpoints
+        getLastConsumedRecipes,
         transbankPayment,
         checkPaymentStatus,
         getPantry,

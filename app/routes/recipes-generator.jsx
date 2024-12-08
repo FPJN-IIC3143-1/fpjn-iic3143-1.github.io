@@ -9,7 +9,7 @@ import ellipseBackground from '/images/ellipse-background.png';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useToken } from './tokenContext';
 import useApi from './useApi';
-import React, { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 
 const headerText = "Con hambre? busca una ... ";
@@ -25,9 +25,11 @@ export default function RecipiesGenerator() {
   const { tokenReady } = useToken();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [lastConsumedRecipes, setLastConsumedRecipes] = useState([]);
+  // const [lastConsumedRecipesTitles, setLastConsumedRecipesTitles] = useState([]);
 
 
-  const getRecipeHandler = async () => {
+  const getRecipeHandler = async () => { // ToDo: Nombre poco descriptivo !!
     if (!tokenReady) {
       console.error("Token not ready. Please wait...");
       return;
@@ -43,6 +45,37 @@ export default function RecipiesGenerator() {
       setLoading(false);
     }
   };
+
+  
+  useEffect(() => {
+    if (tokenReady) {
+      api.getLastConsumedRecipes()
+        .then(async (lastConsumedRecipesData) => {
+          console.log("Fetched Last Consumed Recipes Data:", lastConsumedRecipesData);
+          
+          // Para cada receta consumida, debemos pedir su nombre
+          const recipesWithNames = await Promise.all(
+            lastConsumedRecipesData.map(async (recipe) => {
+              const recipeDetails = await api.getRecipeInformation(recipe["recipe_id"]);
+              return { ...recipe, title: recipeDetails.title };
+            })
+          );
+  
+          console.log("Recipes with names:", recipesWithNames);
+          setLastConsumedRecipes(recipesWithNames);
+          // setLastConsumedRecipesTitles(recipesWithNames.map(recipe => recipe.title));
+          // 3rd use lastConsumedRecipesTitles in DataCard (rightRowInfo)
+          // 4th use another info for leftRowInfo 
+          // 5th repeat the process for favorite recipes
+          
+        })
+        .catch(error => {
+          console.error("Error fetching Last Consumed Recipes Data:", error.message);
+        });
+    }
+  }, [tokenReady]); // WARNING: no agregar 'api' a la lista de dependencias. Esto causará un bucle infinito
+
+  
 
   return (
     <div className="generalContainer flex">

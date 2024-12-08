@@ -8,7 +8,6 @@ export default function DataCard({boxWidth, page='homepage', leftRowInfo, rightR
         <div className="leftRow flex flex-col items-center font-bold pr-[40px]">
           {leftRowInfo.map((leftInfo, index) => (
             <div key={index} className="leftItem mt-[5px] mb-[5px]">
-              {console.log('aaaa = ', rightRowInfo[3])}
               {rightRowInfo[3] === "Calorías" && index === 3 ? 
                 `${leftInfo} kcal` : 
                 (page === 'homepage' || page === 'history' ? 
