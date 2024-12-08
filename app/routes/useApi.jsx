@@ -36,6 +36,8 @@ export default function useApi() {
     };
 
 
+   
+
     // Daily Goals 
     const getDailyGoal = async () => {
         return await apiCall('/nutrition/dailyGoal', 'GET');
@@ -118,9 +120,25 @@ export default function useApi() {
 
     // ToDo: faltan 3 endpoints ///
 
-    const getLastConsumedRecipes = async () => {
-        return await apiCall('/recipes/lastConsumed?limit=3', 'GET');
+    const getLastConsumedRecipes = async (limit) => {
+        return await apiCall(`/recipes/lastConsumed?limit=${limit}`, 'GET');
     }
+
+     // Helper functions
+    const getRecipeNameFromId = async (recipeId) => {
+        try {
+            const recipeInfo = await getRecipeInformation(recipeId);
+            if (recipeInfo.success && recipeInfo.title) {
+                return { success: true, title: recipeInfo.title };
+            } else {
+                return { success: false, message: "Recipe information could not be retrieved." };
+            }
+        } catch (error) {
+            console.error(`Error fetching recipe name for ID ${recipeId}:`, error.message);
+            return { success: false, message: error.message };
+        }
+    };
+
 
     
 
@@ -188,6 +206,7 @@ export default function useApi() {
         generateRecipesByNutritionalGoals,
         // faltan 3 enpoints
         getLastConsumedRecipes,
+        getRecipeNameFromId,
         transbankPayment,
         checkPaymentStatus,
         getPantry,
