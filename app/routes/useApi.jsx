@@ -166,10 +166,14 @@ export default function useApi() {
         return await apiCall('/pantry/updatePantry', 'POST', body);
     }
 
-    // Export History
+    // Export and Import Recipe Data
     const exportRecipeConsumptionHistory = async () => {
         return await apiCall('/history/export', 'GET');
-      };
+    };
+
+    const importRecipeData = async (data) => {
+        return await apiCall('/history/import', 'POST', data);
+    };
 
 
     return {
@@ -189,6 +193,7 @@ export default function useApi() {
         removeIngredientsFromPantry,
         updatePantry,
         exportRecipeConsumptionHistory,
+        importRecipeData,
 
     };
 }

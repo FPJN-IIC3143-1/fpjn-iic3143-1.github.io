@@ -4,6 +4,7 @@ import DataCard from "../components/dataCard";
 import NotificationLogOut from "../components/notificationLogOut";
 import PantryCard from "../components/pantryCard";
 import WelcomePopUp from "../components/welcomePopUp"; // Asegúrate de que la ruta sea correcta
+import SideBar from "../components/sideBar";
 import { useState, useEffect } from "react";
 
 export default function TestPage() { 
@@ -108,30 +109,41 @@ export default function TestPage() {
         { id: 516, quantity: '2kg', name: 'Tallarines' },
         { id: 517, quantity: '1kg', name: 'Arroz' },
     ];
-    return(
-        <div>
-            <h1 className="text-xl font-bold font-">Test Page</h1>
-            <h2>Notification Log Out</h2>
-            <text>     Ahora el cuadro se ubica arriba a la derecha.</text>
-            <NotificationLogOut />
-            <h2>Welcome PopUp</h2>
-            {showWelcome && <WelcomePopUp onSubmitSuccess={handleWelcomeSubmit} />}
-            <h2>Landing Button</h2>
-            <LandingButton bgColor={"#381E72"} textColor={"#D0BCFE"} boxWidth={"200px"} text={"Click Me!"} />
-            <h2>Recipe Card</h2>
-            <RecipeCard boxWidth={"300px"} leftRowInfo={["1", "2"]} rightRowInfo={["3", "4"]} />
-            <h2>Data Card</h2>
-            <DataCard boxWidth={"300px"} leftRowInfo={["1", "2"]} rightRowInfo={["3", "4"]} />
-            <h2>Pantry Card</h2>
-            <PantryCard boxWidth={340} 
-              leftRowInfo={pantryItems.map((item) => 
+    return (
+        <div className="generalContainer flex">
+            <SideBar userName={{ Name: "Test", LastName: "User" }} />
+            
+            <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px]">
+                <h1 className="text-xl font-bold mb-8">Test Page</h1>
                 
-                  <span key={`quantity-${item.id}`}>{item.quantity}</span> 
-    
-              )} 
-              rightRowInfo={pantryItems.map((item) => (
-                <span key={`name-${item.id}`}>{item.name}</span> 
-              ))}/>
+                {/* Existing test components */}
+                <h2>Notification Log Out</h2>
+                <text>Ahora el cuadro se ubica arriba a la derecha.</text>
+                <NotificationLogOut />
+                
+                <h2>Welcome PopUp</h2>
+                {showWelcome && <WelcomePopUp onSubmitSuccess={handleWelcomeSubmit} />}
+                
+                <h2>Landing Button</h2>
+                <LandingButton bgColor={"#381E72"} textColor={"#D0BCFE"} boxWidth={"200px"} text={"Click Me!"} />
+                
+                <h2>Recipe Card</h2>
+                <RecipeCard boxWidth={"300px"} leftRowInfo={["1", "2"]} rightRowInfo={["3", "4"]} />
+                
+                <h2>Data Card</h2>
+                <DataCard boxWidth={"300px"} leftRowInfo={["1", "2"]} rightRowInfo={["3", "4"]} />
+                
+                <h2>Pantry Card</h2>
+                <PantryCard 
+                    boxWidth={340} 
+                    leftRowInfo={pantryItems.map((item) => (
+                        <span key={`quantity-${item.id}`}>{item.quantity}</span> 
+                    ))} 
+                    rightRowInfo={pantryItems.map((item) => (
+                        <span key={`name-${item.id}`}>{item.name}</span> 
+                    ))}
+                />
+            </div>
         </div>
     );
 }
