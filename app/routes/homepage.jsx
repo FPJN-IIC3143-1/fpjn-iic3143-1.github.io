@@ -72,7 +72,7 @@ export default function HomePage() {
         <h1 className="text-4xl text-[#182F40]">
           Bienvenido/a, {user ? user.given_name : "Cargando..."}!
         </h1>
-
+  
         {/* Data Cards */}
         <div className="macros&progressBox flex pt-[100px] justify-evenly">
           <div className="macrosBox flex flex-col items-center">
@@ -104,7 +104,7 @@ export default function HomePage() {
             <div className="h-[20px]"></div>
           </div>
         </div>
-
+  
         <div className="notificationsBox flex flex-col w-full items-center mt-[100px]">
           <div className="flex justify-start w-[830px]">
             <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px]">Últimas notificaciones</div>
@@ -124,12 +124,9 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
-
           </div>
         </div>
-      </div>
-
-
+  
         <img src="/images/ellipse-background.png" alt="elipse" className="absolute top-[50%] left-[50%] z-[-1]" />
         <img src="/images/logo-sin-texto.png" alt="elipse" className="fixed top-[83%] left-[90%]" />
       </div>
