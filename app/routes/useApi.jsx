@@ -99,16 +99,8 @@ export default function useApi() {
     };
 
     const getRecipeInformation = async (recipeId) => {
-        try {
-          const response = await apiCall(`/recipes/${recipeId}/info`, 'GET');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return await response.json();
-        } catch (error) {
-          console.error(`Error with GET request to /recipes/${recipeId}/info:`, error.message);
-          throw error;
-        }
+        return await apiCall(`/recipes/${recipeId}/info`, 'GET');
+
       };
     
     const getRecipeNutrition = async (recipeId) => {

@@ -49,25 +49,9 @@ export default function RecipiesGenerator() {
   
   useEffect(() => {
     if (tokenReady) {
-      api.getLastConsumedRecipes()
-        .then(async (lastConsumedRecipesData) => {
-          console.log("Fetched Last Consumed Recipes Data:", lastConsumedRecipesData);
-          
-          // // Para cada receta consumida, debemos pedir su nombre
-          // const recipesWithNames = await Promise.all(
-          //   lastConsumedRecipesData.map(async (recipe) => {
-          //     const recipeDetails = await api.getRecipeInformation(recipe["recipe_id"]);
-          //     return { ...recipe, title: recipeDetails.title };
-          //   })
-          // );
-  
-          // console.log("Recipes with names:", recipesWithNames);
-          // setLastConsumedRecipes(recipesWithNames);
-          // // setLastConsumedRecipesTitles(recipesWithNames.map(recipe => recipe.title));
-          // // 3rd use lastConsumedRecipesTitles in DataCard (rightRowInfo)
-          // // 4th use another info for leftRowInfo 
-          // // 5th repeat the process for favorite recipes
-          
+      Promise.all([api.getLastConsumedRecipes()])
+        .then(([lastConsumedRecipes]) => {
+          setLastConsumedRecipes(lastConsumedRecipes);
         })
         .catch(error => {
           console.error("Error fetching Last Consumed Recipes Data:", error.message);
@@ -75,7 +59,33 @@ export default function RecipiesGenerator() {
     }
   }, [tokenReady]); // WARNING: no agregar 'api' a la lista de dependencias. Esto causará un bucle infinito
 
-  
+
+  useEffect(() => {
+    if (tokenReady && lastConsumedRecipes.length > 0) {
+      console.log("Last Consumed Recipes:", lastConsumedRecipes);
+
+      // este endpoint da problemas.
+      
+      // console.log((async () => {api.getRecipeInformation(lastConsumedRecipes[0]["recipe_id"])})());
+
+      // lastConsumedRecipes.forEach(recipe => {
+      //   console.log(recipe["recipe_id"]);
+      //   (async () => {
+      //     try {
+      //       const recipeData = await api.getRecipeInformation(recipe["recipe_id"]);
+      //       console.log('Recipe Data inside fetch title:', recipeData);
+      //     } catch (error) {
+      //       console.error("Failed to fetch recipe data:", error);
+      //     }
+      //   })();
+      // });
+    }
+  }
+  , [tokenReady, lastConsumedRecipes]);
+
+
+
+
 
   return (
     <div className="generalContainer flex">
