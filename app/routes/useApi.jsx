@@ -127,7 +127,7 @@ export default function useApi() {
     // ToDo: faltan 3 endpoints ///
 
     const getLastConsumedRecipes = async () => {
-        return await apiCall('/recipes/lastConsumed?limit=4', 'GET');
+        return await apiCall('/recipes/lastConsumed?limit=3', 'GET');
     }
 
     

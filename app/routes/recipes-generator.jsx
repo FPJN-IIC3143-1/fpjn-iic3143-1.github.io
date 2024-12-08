@@ -53,20 +53,20 @@ export default function RecipiesGenerator() {
         .then(async (lastConsumedRecipesData) => {
           console.log("Fetched Last Consumed Recipes Data:", lastConsumedRecipesData);
           
-          // Para cada receta consumida, debemos pedir su nombre
-          const recipesWithNames = await Promise.all(
-            lastConsumedRecipesData.map(async (recipe) => {
-              const recipeDetails = await api.getRecipeInformation(recipe["recipe_id"]);
-              return { ...recipe, title: recipeDetails.title };
-            })
-          );
+          // // Para cada receta consumida, debemos pedir su nombre
+          // const recipesWithNames = await Promise.all(
+          //   lastConsumedRecipesData.map(async (recipe) => {
+          //     const recipeDetails = await api.getRecipeInformation(recipe["recipe_id"]);
+          //     return { ...recipe, title: recipeDetails.title };
+          //   })
+          // );
   
-          console.log("Recipes with names:", recipesWithNames);
-          setLastConsumedRecipes(recipesWithNames);
-          // setLastConsumedRecipesTitles(recipesWithNames.map(recipe => recipe.title));
-          // 3rd use lastConsumedRecipesTitles in DataCard (rightRowInfo)
-          // 4th use another info for leftRowInfo 
-          // 5th repeat the process for favorite recipes
+          // console.log("Recipes with names:", recipesWithNames);
+          // setLastConsumedRecipes(recipesWithNames);
+          // // setLastConsumedRecipesTitles(recipesWithNames.map(recipe => recipe.title));
+          // // 3rd use lastConsumedRecipesTitles in DataCard (rightRowInfo)
+          // // 4th use another info for leftRowInfo 
+          // // 5th repeat the process for favorite recipes
           
         })
         .catch(error => {
