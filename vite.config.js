@@ -58,11 +58,11 @@ export default defineConfig({
   },
   server: {
     watch: {
-      usePolling: true,
-      interval: 300,
+      usePolling: true,   // Activa polling para detectar cambios en entornos donde el file watching puede fallar
+      interval: 300,      // Intervalo de 300 ms (puede ajustarse dependiendo del rendimiento)
     },
     hmr: {
-      overlay: true,
+      overlay: true,  // Asegura que Vite use el overlay para errores de HMR
     },
     proxy: {
       '/api': {
