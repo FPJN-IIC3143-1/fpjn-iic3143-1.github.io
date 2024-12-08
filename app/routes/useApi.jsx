@@ -1,6 +1,7 @@
 import { TokenProvider, useToken } from './tokenContext';
 
-const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
+// const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
+const BASE_URL = "https://67b0-190-22-28-230.ngrok-free.app"
 
 export default function useApi() {
     const { token, tokenReady } = useToken();
@@ -13,8 +14,11 @@ export default function useApi() {
 
         const headers = {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': true
         };
+
+        console.log(headers);
 
         const options = {
             method,
@@ -153,7 +157,8 @@ export default function useApi() {
     const getRecipeNameFromId = async (recipeId) => {
         try {
             const recipeInfo = await getRecipeInformation(recipeId);
-            if (recipeInfo.success && recipeInfo.title) {
+            console.log(recipeInfo)
+            if (recipeInfo.title) {
                 return { success: true, title: recipeInfo.title };
             } else {
                 return { success: false, message: "Recipe information could not be retrieved." };
@@ -201,15 +206,16 @@ export default function useApi() {
     */
     const addIngredientsToPantry = async (ingredients) => {
         const body = { ingredients };
-        return await apiCall('/pantry/addIngredients', 'POST', body);
+        body.sign = 1;
+        return await apiCall('/pantry/modifyIngredients', 'POST', body);
 
     };
-
 
     // Si no mandas el recepie ID, se manda la lista de ingredientes que quieres eliminar.
     const removeIngredientsFromPantry = async ({ recipeId = null, ingredients = [] }) => {
         const body = recipeId ? { recipeId } : { ingredients };
-        return await apiCall('/pantry/removeIngredients', 'POST', body);
+        body.sign = -1;
+        return await apiCall('/pantry/modifyIngredients', 'POST', body);
     };
 
     const updatePantry = async ({recipeId = null, ingredients = []}) => {
