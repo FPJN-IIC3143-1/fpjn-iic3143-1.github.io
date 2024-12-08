@@ -25,6 +25,8 @@ export default function HomePage() {
   const [goalMacros, setGoalMacros] = useState([]);
   const { tokenReady } = useToken(); 
   const [dataFetched, setDataFetched] = useState(false);
+  const [notificationsData, setNotificationsData] = useState([]);
+
   
   useEffect(() => {
     // Check if first time user
@@ -62,13 +64,33 @@ export default function HomePage() {
   }, [tokenReady, dataFetched, api]);
 
 
-  // MOCK NOTIFICATIONS DATA
-  const notifications = [
-    { date: "09/09/2024", message: "Tus ingredientes frecuentes no están en tu despensa!" },
-    { date: "07/09/2024", message: "No tienes pimiento!" },
-    { date: "07/09/2024", message: "No hay yogurt para tus desayunos" },
-    { date: "07/09/2024", message: "Se agotó el arroz en tu despensa!" }
-  ];
+  useEffect(() => {
+    if (tokenReady) {
+      console.log("Token is ready, fetching data...");
+
+      // Fetch data here
+      Promise.all([api.notifications()])
+        .then(([notificationsData]) => {
+          console.log("Fetched Notifications Data:", notificationsData);
+
+          notificationsData = notificationsData.slice(0, 4);
+
+          const formatDate = (dateString) => {
+            return dateString.split("T")[0];
+          };
+
+          setNotificationsData(
+            notificationsData.map((notification) => ({
+              ...notification,
+              createdAt: formatDate(notification.createdAt),
+            }))
+          );
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error.message);
+        });
+    }
+  }, [tokenReady]);
 
 
   return (
@@ -97,25 +119,28 @@ export default function HomePage() {
         </div>
       </div>
 
-        <div className="notificationsBox flex flex-col w-full items-center mt-[100px]">
-          <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px] justify-start w-[830px]">Últimas notificaciones</div>
-          <div className="notificationsCard bg-[#A3BE8C] flex justify-center items-center h-[170px] rounded-[20px] text-[#182F40] w-[830px]">
-            <div className="leftRow flex flex-col items-center font-bold pr-[40px] basis-1/5">
-              {notifications.map((notification, index) => (
-                <div key={index} className="leftItem mt-[5px] mb-[5px]">
-                  {notification.date}
-                </div>
-              ))}
-            </div>
-            <div className="rightRow flex flex-col items-start basis-3/5">
-              {notifications.map((notification, index) => (
-                <div key={index} className="rightRow mt-[5px] mb-[5px]">
-                  {notification.message}
-                </div>
-              ))}
-            </div>
+      <div className="notificationsBox flex flex-col w-full items-center mt-[100px]">
+        <div className="text-3xl text-[#182F40] font-bold pb-[5px] pl-[50px] justify-start w-[830px]">Últimas notificaciones</div>
+
+        <div className="notificationsCard bg-[#A3BE8C] flex h-auto rounded-[20px] text-[#182F40] w-[830px] p-5">
+          <div className="leftRow flex flex-col items-end font-bold pr-[20px] basis-1/5 justify-start">
+            {notificationsData.map((notification, index) => (
+              <div key={index} className="leftItem mt-[5px] mb-[5px]">
+                {notification.createdAt}
+              </div>
+            ))}
+          </div>
+
+          <div className="rightRow flex flex-col items-start basis-4/5 pl-[20px] justify-start">
+            {notificationsData.map((notification, index) => (
+              <div key={index} className="rightItem mt-[5px] mb-[5px]">
+                {notification.message}
+              </div>
+            ))}
           </div>
         </div>
+      </div>
+
 
       
       <img src="/images/ellipse-background.png" alt="elipse" className="absolute top-[50%] left-[50%] z-[-1]"/>
