@@ -147,7 +147,7 @@ export default function useApi() {
         }
     };
 
-    const getLastConsumedRecipes = async (limit) => {
+    const getLastConsumedRecipes = async (limit=10) => {
         return await apiCall(`/recipes/lastConsumed?limit=${limit}`, 'GET');
     }
 
