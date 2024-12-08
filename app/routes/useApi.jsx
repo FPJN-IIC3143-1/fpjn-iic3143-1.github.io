@@ -118,7 +118,32 @@ export default function useApi() {
         return await apiCall(`/recipes/generateByNutritionalGoals?coverage=${coverage}`, 'GET');
     }
 
-    // ToDo: faltan 3 endpoints ///
+    const addRecipeToFavorites = async (recipeId) => {
+        try {
+            return await apiCall(`/recipes/${recipeId}/favorite`, 'POST');
+        } catch (error) {
+            console.error(`Error adding recipe ${recipeId} to favorites:`, error.message);
+            return { success: false, message: error.message };
+        }
+    };
+
+    const removeRecipeFromFavorites = async (recipeId) => {
+        try {
+            return await apiCall(`/recipes/${recipeId}/favorite`, 'DELETE');
+        } catch (error) {
+            console.error(`Error removing recipe ${recipeId} from favorites:`, error.message);
+            return { success: false, message: error.message };
+        }
+    };
+
+    const getFavoriteRecipes = async () => {
+        try {
+            return await apiCall('/recipes/favorites', 'GET');
+        } catch (error) {
+            console.error("Error fetching favorite recipes:", error.message);
+            return { success: false, recipes: [] };
+        }
+    };
 
     const getLastConsumedRecipes = async (limit) => {
         return await apiCall(`/recipes/lastConsumed?limit=${limit}`, 'GET');
@@ -204,7 +229,9 @@ export default function useApi() {
         getRecipeNutrition,
         registerRecipeConsumption,
         generateRecipesByNutritionalGoals,
-        // faltan 3 enpoints
+        addRecipeToFavorites,
+        removeRecipeFromFavorites,
+        getFavoriteRecipes,
         getLastConsumedRecipes,
         getRecipeNameFromId,
         transbankPayment,
