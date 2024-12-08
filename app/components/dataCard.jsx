@@ -1,4 +1,4 @@
-export default function DataCard({boxWidth, leftRowInfo, rightRowInfo}) {
+export default function DataCard({boxWidth, page='homepage', leftRowInfo, rightRowInfo}) {
 
     return (
       <>
@@ -8,7 +8,14 @@ export default function DataCard({boxWidth, leftRowInfo, rightRowInfo}) {
         <div className="leftRow flex flex-col items-center font-bold pr-[40px]">
           {leftRowInfo.map((leftInfo, index) => (
             <div key={index} className="leftItem mt-[5px] mb-[5px]">
-              {leftInfo}
+              {console.log('aaaa = ', rightRowInfo[3])}
+              {rightRowInfo[3] === "Calorías" && index === 3 ? 
+                `${leftInfo} kcal` : 
+                (page === 'homepage' || page === 'history' ? 
+                  `${leftInfo} g` : 
+                  leftInfo
+                )
+              }
             </div>
           ))}
         </div>
