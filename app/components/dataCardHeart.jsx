@@ -1,10 +1,27 @@
-export default function DataCardHeart({ boxWidth, rows, onToggleFavorite }) {
+import React, { useState } from "react";
+
+export default function DataCardHeart({
+  boxWidth,
+  rows,
+  onToggleFavorite,
+  itemsPerPage = 3, 
+}) {
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentRows = rows.slice(startIndex, endIndex);
+
+  const handlePageChange = (pageIndex) => {
+    setCurrentPage(pageIndex);
+  };
+
   return (
     <div
       className="container bg-[#A3BE8C] flex flex-col justify-center items-center rounded-[20px] text-[#182F40]"
       style={{ width: boxWidth }}
     >
-      {rows.map((row, index) => (
+      {currentRows.map((row, index) => (
         <div
           key={index}
           className="row flex justify-between items-center w-full px-[20px] py-[10px] border-b last:border-none"
@@ -17,11 +34,19 @@ export default function DataCardHeart({ boxWidth, rows, onToggleFavorite }) {
 
           {/* Heart Button */}
           <button
-            onClick={() => onToggleFavorite(row.recipeId)} 
+            onClick={() => onToggleFavorite(row.recipeId)}
             className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300 ${
-              row.isFavorite ? "bg-[#4F378B] text-white" : "bg-gray-200 text-gray-500"
+              row.isFavorite
+                ? "bg-[#4F378B] text-white"
+                : "bg-gray-200 text-gray-500"
             }`}
-            aria-label={row.isFavorite ? "Remove from favorites" : "Add to favorites"}
+            style={{
+              minWidth: "30px",
+              minHeight: "30px", 
+            }}
+            aria-label={
+              row.isFavorite ? "Remove from favorites" : "Add to favorites"
+            }
           >
             {row.isFavorite ? (
               <svg
@@ -51,6 +76,36 @@ export default function DataCardHeart({ boxWidth, rows, onToggleFavorite }) {
           </button>
         </div>
       ))}
+
+      {/* Pagination */}
+      <div className="flex justify-center mt-4 space-x-2">
+        {Array.from({ length: Math.ceil(rows.length / itemsPerPage) }).map(
+          (_, pageIndex) => (
+            <div
+              key={pageIndex}
+              onClick={() => handlePageChange(pageIndex)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  handlePageChange(pageIndex); 
+                }
+              }}
+              className={`w-3 h-3 rounded-full cursor-pointer ${
+                pageIndex === currentPage ? "bg-gray-800" : "bg-gray-300"
+              }`}
+              style={{
+                transition: "background-color 0.3s ease",
+              }}
+              role="button" 
+              tabIndex={0} 
+              aria-label={`Go to page ${pageIndex + 1}`}
+            ></div>
+          )
+        )}
+      </div>
+      <div
+  className="container bg-[#A3BE8C] flex flex-col justify-center items-center rounded-[20px] text-[#182F40] pb-6"
+  style={{ width: boxWidth }}
+    ></div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { TokenProvider, useToken } from './tokenContext';
 
-// const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
-const BASE_URL = "https://67b0-190-22-28-230.ngrok-free.app"
+const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
+//const BASE_URL = "https://67b0-190-22-28-230.ngrok-free.app"
 
 export default function useApi() {
     const { token, tokenReady } = useToken();
@@ -14,8 +14,8 @@ export default function useApi() {
 
         const headers = {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': true
+            'Content-Type': 'application/json'
+            //'ngrok-skip-browser-warning': true
         };
 
         console.log(headers);
@@ -39,8 +39,6 @@ export default function useApi() {
         }
     };
 
-
-   
 
     // Daily Goals 
     const getDailyGoal = async () => {

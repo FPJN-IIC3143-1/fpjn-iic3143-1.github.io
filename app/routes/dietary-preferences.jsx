@@ -9,6 +9,7 @@ import useIntolerancePreferences from './helper_preferences/useIntolerancePrefer
 import useMacroGoals from './helper_preferences/useMacroGoals';
 import useApi from './useApi';
 
+
 export default function DietaryPreferences() { 
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const api = useApi();

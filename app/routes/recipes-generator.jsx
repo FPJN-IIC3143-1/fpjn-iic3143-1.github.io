@@ -3,12 +3,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../components/sideBar";
 import ProteinSlider from "../components/proteinSlider";
-import SearchBar from "../components/searchBar";
 import PurpleButton from "../components/purpleButton";
 import DataCardHeart from "../components/dataCardHeart";
 import NotificationLogOut from "../components/notificationLogOut";
-import ellipseBackground from "/images/ellipse-background.png";
+import DataCardNoG from "../components/dataCardNoG";
 import useApi from "./useApi";
+import ellipseBackground from '/images/ellipse-background.png';
 import { useToken } from "./tokenContext";
 
 export default function RecipiesGenerator() {
@@ -27,18 +27,10 @@ export default function RecipiesGenerator() {
     }
     setLoading(true);
     try {
-      const response = await api.getRecipes();
-      console.log("API Response:", response);
-
-      if (response.success) {
-        navigate("/recipes-list", { state: { recipes: response.results } });
-      } else {
-        console.error("Failed to fetch recipes: Success flag is false");
-        alert("Failed to fetch recipes. Please try again later.");
-      }
+      const recipes = await api.getRecipes();
+      navigate("/recipes-list", { state: { recipes: recipes.results } });
     } catch (error) {
       console.error("Failed to fetch recipes:", error);
-      alert("An error occurred while fetching recipes. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -47,23 +39,21 @@ export default function RecipiesGenerator() {
   const fetchLastConsumedRecipes = async () => {
     try {
       const response = await api.getLastConsumedRecipes();
-      if (!response || response.length === 0) {
-        console.error("No last consumed recipes found.");
-        setLastConsumedRecipes([]);
-        return;
-      }
-
-      const recipesWithTitles = await Promise.all(
-        response.map(async (recipe) => {
-          const recipeNameResponse = await api.getRecipeNameFromId(recipe.recipe_id);
-          console.log(recipeNameResponse)
-          return {
-            ...recipe,
-            title: recipeNameResponse.success ? recipeNameResponse.title : "Unknown Recipe",
-          };
-        })
-      );
-  
+      const recipesWithTitles = response.length
+        ? await Promise.all(
+            response.map(async (recipe) => {
+              const recipeNameResponse = await api.getRecipeNameFromId(
+                recipe.recipe_id
+              );
+              return {
+                ...recipe,
+                title: recipeNameResponse.success
+                  ? recipeNameResponse.title
+                  : "Unknown Recipe",
+              };
+            })
+          )
+        : [];
       setLastConsumedRecipes(recipesWithTitles);
     } catch (error) {
       console.error("Error fetching Last Consumed Recipes:", error.message);
@@ -72,33 +62,36 @@ export default function RecipiesGenerator() {
   };
 
   const fetchFavoriteRecipes = async () => {
-  try {
-    const response = await api.getFavoriteRecipes();
-    if (!response || response.length === 0) {
-      console.error("No favorite recipes found.");
+    try {
+      const response = await api.getFavoriteRecipes();
+      const recipesWithTitles = response.length
+        ? await Promise.all(
+            response.map(async (recipe) => {
+              const recipeNameResponse = await api.getRecipeNameFromId(
+                recipe.recipe_id
+              );
+              return {
+                ...recipe,
+                title: recipeNameResponse.success
+                  ? recipeNameResponse.title
+                  : "Unknown Recipe",
+              };
+            })
+          )
+        : [];
+      setFavoriteRecipes(recipesWithTitles);
+    } catch (error) {
+      console.error("Error fetching Favorite Recipes:", error.message);
       setFavoriteRecipes([]);
-      return;
     }
-
-    const recipesWithTitles = await Promise.all(
-      response.map(async (recipe) => {
-        const recipeNameResponse = await api.getRecipeNameFromId(recipe.recipe_id);
-        return {
-          ...recipe,
-          title: recipeNameResponse.success ? recipeNameResponse.title : "Unknown Recipe",
-        };
-      })
-    );
-
-    setFavoriteRecipes(recipesWithTitles);
-  } catch (error) {
-    console.error("Error fetching Favorite Recipes:", error.message);
-    setFavoriteRecipes([]);
-  }
-};
-
+  };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+      return;
+    }
+    
     if (tokenReady) {
       fetchLastConsumedRecipes();
       fetchFavoriteRecipes();
@@ -106,8 +99,10 @@ export default function RecipiesGenerator() {
   }, [tokenReady]);
 
   const toggleFavorite = async (recipeId) => {
-    const isFavorite = favoriteRecipes.some((recipe) => recipe.recipe_id === recipeId);
-  
+    const isFavorite = favoriteRecipes.some(
+      (recipe) => recipe.recipe_id === recipeId
+    );
+
     if (isFavorite) {
       setFavoriteRecipes((prev) =>
         prev.filter((recipe) => recipe.recipe_id !== recipeId)
@@ -115,21 +110,27 @@ export default function RecipiesGenerator() {
       try {
         await api.removeRecipeFromFavorites(recipeId);
       } catch (error) {
-        console.error(`Error removing recipe ${recipeId} from favorites:`, error.message);
+        console.error(
+          `Error removing recipe ${recipeId} from favorites:`,
+          error.message
+        );
       }
     } else {
-      const recipeToAdd = lastConsumedRecipes.find(
-        (recipe) => recipe.recipe_id === recipeId
-      ) || { recipe_id: recipeId }; 
+      const recipeToAdd =
+        lastConsumedRecipes.find((recipe) => recipe.recipe_id === recipeId) || {
+          recipe_id: recipeId,
+        };
       setFavoriteRecipes((prev) => [...prev, recipeToAdd]);
       try {
         await api.addRecipeToFavorites(recipeId);
       } catch (error) {
-        console.error(`Error adding recipe ${recipeId} to favorites:`, error.message);
+        console.error(
+          `Error adding recipe ${recipeId} to favorites:`,
+          error.message
+        );
       }
     }
   };
-
 
   return (
     <div className="generalContainer flex">
@@ -161,21 +162,38 @@ export default function RecipiesGenerator() {
             <div className="text-3xl font-bold mb-[15px] font-kantumruy">
               Últimas recetas
             </div>
-            <DataCardHeart
-  boxWidth={470}
-  rows={lastConsumedRecipes.map((recipe) => ({
-    recipeId: recipe.recipe_id,
-    leftText: `${recipe.title || "Unknown Recipe"} - Calorías: ${recipe.calories || "N/A"}`,
-    rightText: recipe.createdAt
-      ? new Date(recipe.createdAt).toLocaleDateString()
-      : "Invalid Date",
-    isFavorite: favoriteRecipes.some((fav) => fav.recipe_id === recipe.recipe_id),
-  }))}
-  onToggleFavorite={(recipeId) => {
-    toggleFavorite(recipeId); // Use recipeId directly
-  }}
-/>
- 
+            {loading ? (
+              <DataCardNoG
+              boxWidth={470}
+              leftRowInfo={["Generando Recetas"]}
+              rightRowInfo={[" "]}
+            />
+            ) : lastConsumedRecipes.length === 0 ? (
+              <DataCardNoG
+                boxWidth={470}
+                leftRowInfo={["No has hecho recetas"]}
+                rightRowInfo={[""]}
+              />
+            ) : (
+              <DataCardHeart
+                boxWidth={470}
+                rows={lastConsumedRecipes.map((recipe) => ({
+                  recipeId: recipe.recipe_id,
+                  leftText: `${recipe.title || "Unknown Recipe"} - Calorías: ${
+                    recipe.calories || "N/A"
+                  }`,
+                  rightText: recipe.createdAt
+                    ? new Date(recipe.createdAt).toLocaleDateString()
+                    : "Invalid Date",
+                  isFavorite: favoriteRecipes.some(
+                    (fav) => fav.recipe_id === recipe.recipe_id
+                  ),
+                }))}
+                onToggleFavorite={(recipeId) => {
+                  toggleFavorite(recipeId);
+                }}
+              />
+            )}
           </div>
 
           {/* Recetas favoritas */}
@@ -183,23 +201,42 @@ export default function RecipiesGenerator() {
             <div className="text-3xl font-bold mb-[15px] font-kantumruy">
               Recetas favoritas
             </div>
-            <DataCardHeart
-  boxWidth={470}
-  rows={favoriteRecipes.map((recipe) => ({
-    recipeId: recipe.recipe_id,
-    leftText: `${recipe.title || "Unknown Recipe"} - Calorías: ${recipe.calories || "N/A"}`,
-    rightText: recipe.createdAt
-      ? new Date(recipe.createdAt).toLocaleDateString()
-      : "Invalid Date",
-    isFavorite: true, // Always true for favorites
-  }))}
-  onToggleFavorite={(recipeId) => {
-    toggleFavorite(recipeId); // Use recipeId directly
-  }}
-/>
-
-          </div> 
+            {loading ? (
+              <DataCardNoG
+              boxWidth={470}
+              leftRowInfo={["Generando Recetas"]}
+              rightRowInfo={[" "]}
+            />
+            ) : favoriteRecipes.length === 0 ? (
+              <DataCardNoG
+              boxWidth={470}
+              leftRowInfo={["No tienes recetas favoritas"]}
+              rightRowInfo={[" "]}
+            />
+            ) : (
+              <DataCardHeart
+                boxWidth={470}
+                rows={favoriteRecipes.map((recipe) => ({
+                  recipeId: recipe.recipe_id,
+                  leftText: `${recipe.title || "Unknown Recipe"} - Calorías: ${
+                    recipe.calories || "N/A"
+                  }`,
+                  rightText: recipe.createdAt
+                    ? new Date(recipe.createdAt).toLocaleDateString()
+                    : "Invalid Date",
+                  isFavorite: true,
+                }))}
+                onToggleFavorite={(recipeId) => {
+                  toggleFavorite(recipeId);
+                }}
+              />
+            )}
+          </div>
         </div>
+         <img src={ellipseBackground} alt="elipse" className="absolute top-[-35%] left-[-10%] z-[-1]"/>
+        <img src={ellipseBackground} alt="elipse" className="absolute top-[45%] left-[60%] z-[-1]"/>
+        <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />
+
       </div>
       <NotificationLogOut />
     </div>
