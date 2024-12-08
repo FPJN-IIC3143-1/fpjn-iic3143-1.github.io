@@ -1,4 +1,4 @@
-import { TokenProvider, useToken } from './tokenContext';
+import { useToken } from './tokenContext'; // Antes también se importaba TokenProvider
 
 const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
 
@@ -164,6 +164,10 @@ export default function useApi() {
     const updatePantry = async ({recipeId = null, ingredients = []}) => {
         const body = recipeId ? { recipeId } : { ingredients };
         return await apiCall('/pantry/updatePantry', 'POST', body);
+    };
+
+    const notifications = async () => {
+        return await apiCall('/notifications', 'GET');
     }
 
 
@@ -183,7 +187,8 @@ export default function useApi() {
         getPantry,
         addIngredientsToPantry,
         removeIngredientsFromPantry,
-        updatePantry
+        updatePantry,
+        notifications
 
     };
 }
