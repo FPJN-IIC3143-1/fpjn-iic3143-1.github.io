@@ -1,4 +1,4 @@
-import { VitePWA } from 'vite-plugin-pwa'
+import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from "vite";
 import dotenv from 'dotenv';
 import { vitePlugin as remix } from "@remix-run/dev";
@@ -48,7 +48,6 @@ export default defineConfig({
         v3_throwAbortReason: true,
       },
     }),
-
   ],
   define: {
     'process.env': {
@@ -59,11 +58,38 @@ export default defineConfig({
   },
   server: {
     watch: {
-      usePolling: true,   // Activa polling para detectar cambios en entornos donde el file watching puede fallar
-      interval: 300,      // Intervalo de 300 ms (puede ajustarse dependiendo del rendimiento)
+      usePolling: true,
+      interval: 300,
     },
     hmr: {
-      overlay: true,      // Asegura que Vite use el overlay para errores de HMR
+      overlay: true,
     },
-  }
+    proxy: {
+      '/api': {
+        target: 'https://3pndzfcvne.us-east-1.awsapprunner.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Remove '/api' prefix before forwarding
+      },
+      '/recipes': {
+        target: 'https://3pndzfcvne.us-east-1.awsapprunner.com',
+        changeOrigin: true,
+      },
+      '/nutrition': {
+        target: 'https://3pndzfcvne.us-east-1.awsapprunner.com',
+        changeOrigin: true,
+      },
+      '/preferences': {
+        target: 'https://3pndzfcvne.us-east-1.awsapprunner.com',
+        changeOrigin: true,
+      },
+      '/pantry': {
+        target: 'https://3pndzfcvne.us-east-1.awsapprunner.com',
+        changeOrigin: true,
+      },
+      '/payment': {
+        target: 'https://3pndzfcvne.us-east-1.awsapprunner.com',
+        changeOrigin: true,
+      },
+    },
+  },
 });

@@ -10,7 +10,7 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { getRecipeInformation } = useApi();
+  const { getRecipeInformation, registerRecipeConsumption} = useApi();
 
   const handlePopupOpen = async () => {
     setLoading(true);
@@ -31,9 +31,16 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
     setShowAlert(true);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setShowAlert(false);
-    console.log("Confirmed 'Hacer Receta'");
+    try {
+      const response = await registerRecipeConsumption(recipeId);
+      console.log(response);
+      alert(`${response.message}`);
+    } catch (err) {
+      alert(`Error al registrar la receta: ${err.message}`);
+      console.error(err.message);
+    }
   };
 
   const handleCloseAlert = () => {
@@ -49,7 +56,6 @@ export default function RecipeCard({ N, recipeName, imageUrl, recipeId }) {
     <div className="recipe-card flex flex-col items-center">
       <div className="title text-[#182F40] text-4xl font-bold">Receta {N}</div>
 
-      {/* Green Background Container */}
       <div className="container bg-[#A3BE8C] flex flex-col rounded-[20px] text-[#182F40] w-[320px] mt-4 shadow-lg">
         {/* Recipe Image */}
         <img
