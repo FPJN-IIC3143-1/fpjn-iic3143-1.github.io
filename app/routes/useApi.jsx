@@ -18,8 +18,6 @@ export default function useApi() {
             //'ngrok-skip-browser-warning': true
         };
 
-        console.log(headers);
-
         const options = {
             method,
             headers,
@@ -50,6 +48,20 @@ export default function useApi() {
         return await apiCall('/nutrition/dailyGoal', 'POST', dailyGoal);
     };
 
+
+    // History
+    const getHistory = async (period) => {
+        if (!period) {
+            console.error("Period is required to fetch history");
+            return { success: false, message: "Invalid period" };
+        }
+        try {
+            return await apiCall(`/nutrition/consumedOverPeriod?period=${period}`, 'GET');
+        } catch (error) {
+            console.error("Error fetching history data:", error.message);
+            return { success: false, message: error.message };
+        }
+    };
 
      // Preferences
     const getPreferences = async () => {
@@ -226,7 +238,6 @@ export default function useApi() {
     }
 
 
-
     return {
         setDailyGoal,
         getDailyGoal,
@@ -248,7 +259,8 @@ export default function useApi() {
         addIngredientsToPantry,
         removeIngredientsFromPantry,
         updatePantry,
-        notifications
+        notifications,
+        getHistory
 
     };
 }

@@ -27,7 +27,7 @@ export const TokenProvider = ({ children }) => {
 
             setToken(generatedToken); 
             setTokenReady(true);  
-            console.log("JWT Token generated:", generatedToken);
+            //console.log("JWT Token generated:", generatedToken);
         } catch (error) {
             console.error("Error generating JWT token:", error);
         }

@@ -1,91 +1,191 @@
-import { useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import useApi from "./useApi";
 import SideBar from "../components/sideBar";
-import DataCard from '../components/dataCard';
-import NotificationLogOut from '../components/notificationLogOut';
+import NotificationLogOut from "../components/notificationLogOut";
+import { useToken } from "./tokenContext";
 
 export default function History() {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { tokenReady } = useToken();
+  const api = useApi();
+  const [historyData, setHistoryData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState({}); // Tracks the current page for each period
+
+  const periods = ["this week", "last week", "this month"];
+  const itemsPerPage = 4; // Number of ingredients per page
+
+  const fetchHistoryData = async () => {
+    if (!tokenReady) return;
+
+    setLoading(true);
+    try {
+      const fetchedData = {};
+      for (const period of periods) {
+        const data = await api.getHistory(period);
+        fetchedData[period] = data;
+      }
+      setHistoryData(fetchedData);
+
+      // Initialize pagination state
+      const initialPages = {};
+      periods.forEach((period) => {
+        initialPages[period] = 1; // Start from the first page for all periods
+      });
+      setCurrentPage(initialPages);
+    } catch (error) {
+      console.error("Error fetching history data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
       loginWithRedirect();
+      return;
     }
-  }, [isAuthenticated, loginWithRedirect]);
 
- 
+    if (tokenReady) {
+      fetchHistoryData();
+    }
+  }, [isAuthenticated, tokenReady]);
+
+  const handlePageChange = (period, page) => {
+    setCurrentPage((prev) => ({
+      ...prev,
+      [period]: page,
+    }));
+  };
+
+  const paginateIngredients = (ingredients, page) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return ingredients.slice(startIndex, endIndex);
+  };
+
   return (
     <div className="flex">
-      <SideBar/>
-
+      <SideBar />
       <div className="relative h-[1100px] grow bg-[#E5E9F0] p-10 z-[0]">
-        
         {/* Page Header */}
-        <h1 className="text-3xl text-[#182F40] font-bold">Tus secretos solo conocidos por los ... <span className="text-7xl font-extralight">Historiales</span></h1>
-
+        <h1 className="text-3xl font-bold text-black">
+          Tus secretos solo conocidos por los ...{" "}
+          <span className="text-7xl font-extralight text-black">Historiales</span>
+        </h1>
 
         {/* Macronutrients Section */}
-        <div className="mt-[100px] flex items-center">
-          <div className="text-4xl font-bold text-[#182F40] mr-[90px] mt-[20px]">
+        <div className="mt-[100px]">
+          <div className="text-4xl font-bold text-black">
             Macro
             <p className="font-light">nutrientes</p>
           </div>
-          {/* Labels */}
-          <div className="text-lg text-[#182F40] mt-[35px]">
-            <p>Proteína</p>
-            <p>Grasa</p>
-            <p>Carbohidratos</p>
-            <p>Calorías</p>
-          </div>
-          {/* Macronutrient Cards */}
-          <div className="flex grow justify-evenly max-w-[800px]">
-            {[
-              { label: "Esta semana", values: ["300g", "40g", "420g", "8300kcal"] },
-              { label: "Semana pasada", values: ["570g", "110g", "820g", "12100kcal"] },
-              { label: "Este mes", values: ["2.3kg", "340g", "2.4kg", "47030kcal"] },
-            ].map((item, index) => (
-              <div key={index} className='text-[#182F40] flex flex-col items-center font-bold'>
-                <div className="text-lg font-bold mb-[10px]">{item.label}</div>
-                <div className="flex flex-col items-center bg-[#A3BE8C] rounded-md text-center shadow-sm w-[100px] hover:shadow-md transition-shadow duration-200">
-                <div className="text-sm pt-[20px] pb-[20px]">
-                  {item.values.map((value, idx) => (
-                    <p key={idx} className='pb-[5px]'>{value}</p>
-                  ))}
+          <div className="flex justify-evenly mt-5">
+            {periods.map((period, index) => (
+              <div key={index} className="text-center">
+                <h3 className="text-lg font-bold mb-2 text-black">
+                  {period === "this week"
+                    ? "Esta semana"
+                    : period === "last week"
+                    ? "Semana pasada"
+                    : "Este mes"}
+                </h3>
+                <div className="bg-[#A3BE8C] rounded-md p-4 shadow-md min-w-[250px]">
+                  {loading || !historyData[period]?.macronutrients ? (
+                    <>
+                      <p className="text-black">Proteína: --</p>
+                      <p className="text-black">Grasa: --</p>
+                      <p className="text-black">Carbohidratos: --</p>
+                      <p className="text-black">Calorías: --</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-black">
+                        Proteína: {historyData[period].macronutrients.protein}g
+                      </p>
+                      <p className="text-black">
+                        Grasa: {historyData[period].macronutrients.fats}g
+                      </p>
+                      <p className="text-black">
+                        Carbohidratos: {historyData[period].macronutrients.carbs}g
+                      </p>
+                      <p className="text-black">
+                        Calorías: {historyData[period].macronutrients.calories}kcal
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
-              </div>
             ))}
           </div>
         </div>
 
-        {/* Alimentos Consumidos Section */}
-        <div className="mt-[100px] flex items-center h-[200px]">
-          <div className="text-4xl font-bold text-[#182F40] mr-8 mt-[20px]">
+        {/* Ingredients Section */}
+        <div className="mt-[100px]">
+          <div className="text-4xl font-bold text-black">
             Alimentos
-            <p className="font-light">consumidos</p>
+            <p className="font-light text-black">consumidos</p>
           </div>
-          {/* Macronutrient Cards */}
-          <div className="flex grow justify-evenly max-w-[1000px]">
-            {[
-              { label: "Esta semana", leftInfo: ["0.5", "2", "400", "230"], rightInfo: ["Broccoli", "Tomates", "Vacuno", "Arroz"] },
-              { label: "Semana pasada", leftInfo: ["0.5", "2", "400", "230"], rightInfo: ["Broccoli", "Tomates", "Arroz", "Chía"] },
-              { label: "Este mes", leftInfo: ["0.5", "2", "400", "230"], rightInfo: ["Tomates", "Vacuno", "Arroz", "Chía"] },
-            ].map((item, index) => (
-              <div key={index} className='flex flex-col items-center'>
-                <div className="text-2xl mb-[10px] font-bold text-[#182F40]">{item.label}</div>
-                  <DataCard boxWidth={220} page='history' leftRowInfo={item.leftInfo} rightRowInfo={item.rightInfo}/>
+          <div className="flex justify-evenly mt-5">
+            {periods.map((period, index) => (
+              <div key={index} className="text-center">
+                <h3 className="text-lg font-bold mb-2 text-black">
+                  {period === "this week"
+                    ? "Esta semana"
+                    : period === "last week"
+                    ? "Semana pasada"
+                    : "Este mes"}
+                </h3>
+                <div className="bg-[#A3BE8C] rounded-md p-4 shadow-md min-w-[250px]">
+                  {loading || !historyData[period]?.ingredients ? (
+                    <p className="text-black">--</p>
+                  ) : (
+                    paginateIngredients(
+                      historyData[period].ingredients,
+                      currentPage[period] || 1
+                    ).map((ingredient, idx) => (
+                      <p key={idx} className="text-black">{ingredient}</p>
+                    ))
+                  )}
+                </div>
+
+                {/* Pagination Dots */}
+                {historyData[period]?.ingredients?.length > itemsPerPage && (
+                  <div className="flex justify-center mt-3">
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          historyData[period].ingredients.length / itemsPerPage
+                        ),
+                      },
+                      (_, i) => (
+                        <button
+                          key={i}
+                          className={`w-3 h-3 rounded-full mx-1 ${
+                            currentPage[period] === i + 1
+                              ? "bg-[#182F40]"
+                              : "bg-gray-400"
+                          }`}
+                          onClick={() => handlePageChange(period, i + 1)}
+                        ></button>
+                      )
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
 
-
-        {/* Decorative Background */}
-        {/* <img src="/images/ellipse-background.png" alt="decorative ellipse" className="absolute top-[-10%] left-[-5%] w-1/4 z-[-10]" /> */}
-        
         {/* Logo */}
-        <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />      </div>
-      <NotificationLogOut/>
+        <img
+          src="/images/logo-sin-texto.png"
+          alt="logo"
+          className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]"
+        />
+      </div>
+      <NotificationLogOut />
     </div>
   );
 }
