@@ -9,5 +9,10 @@ module.exports = {
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
-  transformIgnorePatterns: ['/node_modules/'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(jose|@auth0/auth0-react)/)'
+  ],
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons'],
+  }
 };
