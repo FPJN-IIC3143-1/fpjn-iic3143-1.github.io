@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
-export default function HeartButton({ isFavorite, onToggle }) {
+export default function HeartButton({ isFavorite = false, onToggle = () => {} }) {
   return (
     <button
+      data-testid="heart-button"
       onClick={onToggle}
       className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300 ${
         isFavorite ? "bg-[#4F378B] text-white" : "bg-gray-200 text-gray-500"
@@ -11,6 +12,7 @@ export default function HeartButton({ isFavorite, onToggle }) {
     >
       {isFavorite ? (
         <svg
+          data-testid="heart-icon-filled"
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
           viewBox="0 0 24 24"
@@ -20,6 +22,7 @@ export default function HeartButton({ isFavorite, onToggle }) {
         </svg>
       ) : (
         <svg
+          data-testid="heart-icon-outline"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           stroke="currentColor"
