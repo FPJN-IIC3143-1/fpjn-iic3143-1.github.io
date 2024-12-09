@@ -1,4 +1,4 @@
-export default function DataCard({boxWidth, page='homepage', leftRowInfo, rightRowInfo}) {
+export default function DataCardNoG({boxWidth, page='homepage', leftRowInfo, rightRowInfo}) {
 
     return (
       <>
@@ -11,7 +11,7 @@ export default function DataCard({boxWidth, page='homepage', leftRowInfo, rightR
               {rightRowInfo[3] === "Calorías" && index === 3 ? 
                 `${leftInfo} kcal` : 
                 (page === 'homepage' || page === 'history' ? 
-                  `${leftInfo} g` : 
+                  `${leftInfo}` : 
                   leftInfo
                 )
               }

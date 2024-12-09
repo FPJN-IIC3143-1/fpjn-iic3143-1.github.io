@@ -1,6 +1,7 @@
 import { useToken } from './tokenContext';
 
 const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
+//const BASE_URL = "https://67b0-190-22-28-230.ngrok-free.app"
 
 export default function useApi() {
     const { token, tokenReady } = useToken();
@@ -14,7 +15,10 @@ export default function useApi() {
         const headers = {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
+            //'ngrok-skip-browser-warning': true
         };
+
+        console.log(headers);
 
         const options = {
             method,
@@ -100,7 +104,8 @@ export default function useApi() {
 
     const getRecipeInformation = async (recipeId) => {
         return await apiCall(`/recipes/${recipeId}/info`, 'GET');
-    }
+
+      };
     
     const getRecipeNutrition = async (recipeId) => {
         return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
@@ -115,6 +120,55 @@ export default function useApi() {
         return await apiCall(`/recipes/generateByNutritionalGoals?coverage=${coverage}`, 'GET');
     }
 
+    const addRecipeToFavorites = async (recipeId) => {
+        try {
+            return await apiCall(`/recipes/${recipeId}/favorite`, 'POST');
+        } catch (error) {
+            console.error(`Error adding recipe ${recipeId} to favorites:`, error.message);
+            return { success: false, message: error.message };
+        }
+    };
+
+    const removeRecipeFromFavorites = async (recipeId) => {
+        try {
+            return await apiCall(`/recipes/${recipeId}/favorite`, 'DELETE');
+        } catch (error) {
+            console.error(`Error removing recipe ${recipeId} from favorites:`, error.message);
+            return { success: false, message: error.message };
+        }
+    };
+
+    const getFavoriteRecipes = async () => {
+        try {
+            return await apiCall('/recipes/favorites', 'GET');
+        } catch (error) {
+            console.error("Error fetching favorite recipes:", error.message);
+            return { success: false, recipes: [] };
+        }
+    };
+
+    const getLastConsumedRecipes = async (limit=10) => {
+        return await apiCall(`/recipes/lastConsumed?limit=${limit}`, 'GET');
+    }
+
+     // Helper functions
+    const getRecipeNameFromId = async (recipeId) => {
+        try {
+            const recipeInfo = await getRecipeInformation(recipeId);
+            console.log(recipeInfo)
+            if (recipeInfo.title) {
+                return { success: true, title: recipeInfo.title };
+            } else {
+                return { success: false, message: "Recipe information could not be retrieved." };
+            }
+        } catch (error) {
+            console.error(`Error fetching recipe name for ID ${recipeId}:`, error.message);
+            return { success: false, message: error.message };
+        }
+    };
+
+
+    
 
     // Transbank
 
@@ -150,20 +204,25 @@ export default function useApi() {
     */
     const addIngredientsToPantry = async (ingredients) => {
         const body = { ingredients };
-        return await apiCall('/pantry/addIngredients', 'POST', body);
+        body.sign = 1;
+        return await apiCall('/pantry/modifyIngredients', 'POST', body);
 
     };
-
 
     // Si no mandas el recepie ID, se manda la lista de ingredientes que quieres eliminar.
     const removeIngredientsFromPantry = async ({ recipeId = null, ingredients = [] }) => {
         const body = recipeId ? { recipeId } : { ingredients };
-        return await apiCall('/pantry/removeIngredients', 'POST', body);
+        body.sign = -1;
+        return await apiCall('/pantry/modifyIngredients', 'POST', body);
     };
 
     const updatePantry = async ({recipeId = null, ingredients = []}) => {
         const body = recipeId ? { recipeId } : { ingredients };
         return await apiCall('/pantry/updatePantry', 'POST', body);
+    };
+
+    const notifications = async () => {
+        return await apiCall('/notifications', 'GET');
     }
 
     // Export and Import Recipe Data
@@ -186,6 +245,11 @@ export default function useApi() {
         getRecipeNutrition,
         registerRecipeConsumption,
         generateRecipesByNutritionalGoals,
+        addRecipeToFavorites,
+        removeRecipeFromFavorites,
+        getFavoriteRecipes,
+        getLastConsumedRecipes,
+        getRecipeNameFromId,
         transbankPayment,
         checkPaymentStatus,
         getPantry,
@@ -194,6 +258,7 @@ export default function useApi() {
         updatePantry,
         exportRecipeConsumptionHistory,
         importRecipeData,
+        notifications
 
     };
 }

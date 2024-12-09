@@ -9,6 +9,21 @@ import useIntolerancePreferences from './helper_preferences/useIntolerancePrefer
 import useMacroGoals from './helper_preferences/useMacroGoals';
 import useApi from './useApi';
 
+const intoleranceTranslation = {
+  "Lácteos": "dairy",
+  "Huevo": "egg",
+  "Gluten": "gluten",
+  "Grano": "grain",
+  "Maní": "peanut",
+  "Mariscos": "seafood",
+  "Sésamo": "sesame",
+  "Moluscos": "shellfish",
+  "Soya": "soy",
+  "Sulfito": "sulfite",
+  "Nueces de árbol": "tree nut",
+  "Trigo": "wheat",
+};
+
 export default function DietaryPreferences() { 
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   const api = useApi();
@@ -16,12 +31,18 @@ export default function DietaryPreferences() {
 
   const [isEditingMacros, setIsEditingMacros] = useState(false);
   const [isEditingDiet, setIsEditingDiet] = useState(false);
-  const [isEditingIntolerances, setIsEditingIntolerances] = useState(false); // New state for intolerances edit mode
+  const [isEditingIntolerances, setIsEditingIntolerances] = useState(false);
   const [dataFetched, setDataFetched] = useState(false);
 
   const { diet, setDiet, handleDietSelection, saveDietPreferences } = useDietPreferences();
   const { intolerances, setIntolerances, handleIntoleranceSelection, saveIntolerancePreferences } = useIntolerancePreferences();
   const { macroGoals, setMacroGoals, handleMacroChange, saveMacroGoals } = useMacroGoals();
+
+  // Create inverse translation map to translate English intolerances back to Spanish
+  const inverseTranslation = Object.entries(intoleranceTranslation).reduce((acc, [spanish, english]) => {
+    acc[english] = spanish;
+    return acc;
+  }, {});
 
   useEffect(() => { 
     if (!isAuthenticated) {
@@ -33,15 +54,21 @@ export default function DietaryPreferences() {
       Promise.all([api.getDailyGoal(), api.getPreferences()])
         .then(([goalData, preferences]) => {
           handleMacroChange(goalData);
+
           if (preferences) {
+            // Set diet
             setDiet(preferences.diet ? preferences.diet.split(",") : []);
-            setIntolerances(Array.isArray(preferences.intolerances) ? preferences.intolerances : []);
+
+            // Translate English intolerances back to Spanish before setting them
+            const englishIntolerances = Array.isArray(preferences.intolerances) ? preferences.intolerances : [];
+            const spanishIntolerances = englishIntolerances.map(engInt => inverseTranslation[engInt] || engInt);
+            setIntolerances(spanishIntolerances);
           }
         })
         .catch(error => console.error("Error fetching data:", error))
         .finally(() => setDataFetched(true));
     }
-  }, [isAuthenticated, loginWithRedirect, tokenReady, dataFetched, handleMacroChange, setDiet, setIntolerances, api]);
+  }, [isAuthenticated, loginWithRedirect, tokenReady, dataFetched, handleMacroChange, setDiet, setIntolerances, api, inverseTranslation]);
 
   const saveMacroGoalsAndResetView = () => {
     saveMacroGoals().then(() => {
@@ -57,13 +84,13 @@ export default function DietaryPreferences() {
 
   const saveIntolerancesAndResetView = () => {
     saveIntolerancePreferences(diet).then(() => {
-      setIsEditingIntolerances(false); // Reset edit mode for intolerances
+      setIsEditingIntolerances(false);
     });
   };
 
   return (
     <div className="GeneralContainer flex">
-      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <SideBar />
 
       <div className="Container relative h-[1100px] grow bg-[#E5E9F0] p-[60px] pl-[100px] z-[0]">
         <div className="text-3xl text-[#182F40] font-bold mt-[60px]">Bud te acompaña, tú decides...</div>
@@ -83,7 +110,7 @@ export default function DietaryPreferences() {
                   type="checkbox"
                   checked={intolerances.includes(intolerance)}
                   onChange={() => handleIntoleranceSelection(intolerance)}
-                  disabled={!isEditingIntolerances} // Disable checkbox when not in edit mode
+                  disabled={!isEditingIntolerances}
                   className="mr-4 w-6 h-6 rounded-full border-2 border-gray-400 cursor-pointer appearance-none 
                             checked:bg-[#5B467C] checked:border-[#5B467C] relative"
                   style={{

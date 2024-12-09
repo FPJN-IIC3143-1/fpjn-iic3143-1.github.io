@@ -10,7 +10,7 @@ export default function RecipiesList() {
 
   return (
     <div className="generalContainer flex">
-      <SideBar userName={{ Name: "Dafne", LastName: "Arriagada" }} />
+      <SideBar />
       <div className="ContainerBody relative h-[1100px] grow bg-[#E5E9F0] p-[60px] z-[0] overflow-y-hidden">
         <h1 className="text-3xl text-[#182F40] font-bold">
           Con hambre? busca una ...{" "}
@@ -27,6 +27,7 @@ export default function RecipiesList() {
                   N={index + 1}
                   recipeName={recipe.title}
                   imageUrl={recipe.image}
+                  recipeId={recipe.id}
                 />
               ))
             ) : (
