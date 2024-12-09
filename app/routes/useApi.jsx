@@ -1,4 +1,4 @@
-import { TokenProvider, useToken } from './tokenContext';
+import { useToken } from './tokenContext';
 
 const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
 
