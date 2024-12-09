@@ -122,9 +122,16 @@ export default function useApi() {
     const getRecipeNutrition = async (recipeId) => {
         return await apiCall(`/recipes/${recipeId}/nutrition`, 'GET');
     }
+
+    const removeIngredientsFromPantryAfterConsumtion = async ({recipeId}) => {
+        const body = {recipeId: recipeId, sign: 1};
+        return await apiCall('/pantry/modifyIngredients', 'POST', body);
+    };
     
     const registerRecipeConsumption = async (recipeId) => {
+        await removeIngredientsFromPantryAfterConsumtion(recipeId);
         return await apiCall(`/recipes/${recipeId}/register`, 'POST', {});
+        
     }
 
     // Coverage = low, medium, high
@@ -246,6 +253,9 @@ export default function useApi() {
         return await apiCall('/history/import', 'POST', data);
     };
 
+
+
+
     return {
         setDailyGoal,
         getDailyGoal,
@@ -270,7 +280,8 @@ export default function useApi() {
         getHistory,
         exportRecipeConsumptionHistory,
         importRecipeData,
-        notifications
+        notifications,
+        removeIngredientsFromPantryAfterConsumtion
 
     };
 }
