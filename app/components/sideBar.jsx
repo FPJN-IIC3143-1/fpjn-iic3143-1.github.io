@@ -4,10 +4,13 @@ import arrowLeft from '/images/arrow-left-circle.png';
 import arrowRight from '/images/arrow-right-circle.png';
 import { useNavigate } from '@remix-run/react';
 import useApi from '../routes/useApi';
+import ExportHistoryButton from './exportHistoryButton';
+import ImportDataButton from './importDataButton';
 
 export default function SideBar() {
   const { logout, user } = useAuth0(); // Access Auth0 user object
   const [isOpen, setIsOpen] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [redirectUrl, setRedirectUrl] = useState(null);
   const api = useApi();
   const navigate = useNavigate();
@@ -139,6 +142,9 @@ export default function SideBar() {
             >
               Alimentos Consumidos
             </button>
+            
+            <ExportHistoryButton />
+            <ImportDataButton />
 
             <div className="Separator h-[200px]"></div>
 

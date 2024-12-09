@@ -1,4 +1,4 @@
-import { useToken } from './tokenContext'; // Antes también se importaba TokenProvider
+import { useToken } from './tokenContext';
 
 const BASE_URL = "https://3pndzfcvne.us-east-1.awsapprunner.com";
 //const BASE_URL = "https://67b0-190-22-28-230.ngrok-free.app"
@@ -225,6 +225,14 @@ export default function useApi() {
         return await apiCall('/notifications', 'GET');
     }
 
+    // Export and Import Recipe Data
+    const exportRecipeConsumptionHistory = async () => {
+        return await apiCall('/history/export', 'GET');
+    };
+
+    const importRecipeData = async (data) => {
+        return await apiCall('/history/import', 'POST', data);
+    };
 
 
     return {
@@ -248,6 +256,8 @@ export default function useApi() {
         addIngredientsToPantry,
         removeIngredientsFromPantry,
         updatePantry,
+        exportRecipeConsumptionHistory,
+        importRecipeData,
         notifications
 
     };
