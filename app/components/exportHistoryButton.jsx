@@ -1,3 +1,4 @@
+// app/components/exportHistoryButton.jsx
 import { useState } from 'react';
 import useApi from '../routes/useApi';
 
@@ -13,16 +14,6 @@ export default function ExportHistoryButton() {
     e.target.style.color = "#ffffff";
   };
 
-  const cleanupData = (data) => {
-    return data.map(item => ({
-      fecha_consumo: new Date(item.consumedAt).toLocaleString(),
-      receta_id: item.recipe_id,
-      proteinas: item.protein + 'g',
-      carbohidratos: item.carbs + 'g',
-      calorias: item.calories + 'kcal'
-    }));
-  };
-
   const handleExportHistory = async () => {
     if (isExporting) return;
     
@@ -31,34 +22,24 @@ export default function ExportHistoryButton() {
       console.log('Fetching export data...');
       const response = await api.exportRecipeConsumptionHistory();
       
-      // Debug response
       console.log('Raw API response:', response);
-  
-      // Check if response exists
+
       if (!response) {
         throw new Error('No se recibió respuesta del servidor');
       }
-  
-      // Check if we got the data directly or need to access it differently
+
       const data = Array.isArray(response) ? response : response.data;
       
-      // Validate data
       if (!data || !Array.isArray(data) || data.length === 0) {
         throw new Error('No hay datos disponibles para exportar');
       }
-  
+
       console.log(`Received ${data.length} records`);
       console.log('Sample record:', data[0]);
-      
-      const cleanedData = cleanupData(data);
-      console.log('Processed data sample:', cleanedData[0]);
-  
-      const csvData = convertToCSV(cleanedData);
-      console.log('CSV preview:', csvData.slice(0, 200));
-  
-      await downloadCSV(csvData, `historial-consumo-${new Date().toISOString().split('T')[0]}.csv`);
+
+      await downloadJSON(data, `historial-consumo-${new Date().toISOString().split('T')[0]}.json`);
       console.log('Download completed');
-  
+
     } catch (error) {
       console.error('Error during export:', error);
       const errorMessage = error.message || 'Error desconocido durante la exportación';
@@ -68,22 +49,9 @@ export default function ExportHistoryButton() {
     }
   };
 
-  const convertToCSV = (data) => {
-    if (!data.length) return '';
-    
-    const headers = Object.keys(data[0]).join(',');
-    const rows = data.map(row => 
-      Object.values(row)
-        .map(val => `"${val}"`)
-        .join(',')
-    ).join('\n');
-    
-    return `${headers}\n${rows}`;
-  };
-
-  const downloadCSV = async (csvData, filename) => {
+  const downloadJSON = async (data, filename) => {
     return new Promise((resolve) => {
-      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       
@@ -93,7 +61,6 @@ export default function ExportHistoryButton() {
       
       link.click();
       
-      // Cleanup
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       resolve();
