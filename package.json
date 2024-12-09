@@ -22,7 +22,8 @@
     "react-credit-cards-2": "^1.0.3",
     "react-dom": "^19.0.0-rc-e4953922-20240919",
     "react-router-dom": "^6.26.2",
-    "vite-plugin-pwa": "^0.20.5"
+    "vite-plugin-pwa": "^0.20.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.12.1",
