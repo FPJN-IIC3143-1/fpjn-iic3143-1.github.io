@@ -21,9 +21,9 @@ export default function DataCardHeart({
       className="container bg-[#A3BE8C] flex flex-col justify-center items-center rounded-[20px] text-[#182F40]"
       style={{ width: boxWidth }}
     >
-      {currentRows.map((row, index) => (
+      {currentRows.map((row) => (
         <div
-          key={index}
+          key={row.id}
           className="row flex justify-between items-center w-full px-[20px] py-[10px] border-b last:border-none"
         >
           {/* Left Row Content */}
@@ -34,7 +34,7 @@ export default function DataCardHeart({
 
           {/* Heart Button */}
           <button
-            onClick={() => onToggleFavorite(row.recipeId)}
+            onClick={() => onToggleFavorite(row.recipe_id)} // send recipe_id for toggling
             className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors duration-300 ${
               row.isFavorite
                 ? "bg-[#4F378B] text-white"
@@ -55,7 +55,13 @@ export default function DataCardHeart({
                 viewBox="0 0 24 24"
                 className="w-5 h-5"
               >
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                <path d="M12 21.35l-1.45-1.32C5.4 
+                  15.36 2 12.28 2 8.5C2 5.42 
+                  4.42 3 7.5 3c1.74 0 3.41.81 
+                  4.5 2.09C13.09 3.81 14.76 3 
+                  16.5 3c3.08 0 5.5 2.42 
+                  5.5 5.5c0 3.78-3.4 6.86-8.55 
+                  11.54L12 21.35z" />
               </svg>
             ) : (
               <svg
@@ -67,7 +73,13 @@ export default function DataCardHeart({
                 className="w-5 h-5"
               >
                 <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  d="M12 21.35l-1.45-1.32C5.4 
+                    15.36 2 12.28 2 8.5C2 5.42 
+                    4.42 3 7.5 3c1.74 0 3.41.81 
+                    4.5 2.09C13.09 3.81 14.76 3 
+                    16.5 3c3.08 0 5.5 2.42 
+                    5.5 5.5c0 3.78-3.4 6.86-8.55 
+                    11.54L12 21.35z"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -103,9 +115,9 @@ export default function DataCardHeart({
         )}
       </div>
       <div
-  className="container bg-[#A3BE8C] flex flex-col justify-center items-center rounded-[20px] text-[#182F40] pb-6"
-  style={{ width: boxWidth }}
-    ></div>
+        className="container bg-[#A3BE8C] flex flex-col justify-center items-center rounded-[20px] text-[#182F40] pb-6"
+        style={{ width: boxWidth }}
+      ></div>
     </div>
   );
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 import SideBar from "../components/sideBar";
-import ProteinSlider from "../components/proteinSlider";
 import PurpleButton from "../components/purpleButton";
 import DataCardHeart from "../components/dataCardHeart";
 import NotificationLogOut from "../components/notificationLogOut";
@@ -91,43 +90,36 @@ export default function RecipiesGenerator() {
       loginWithRedirect();
       return;
     }
-    
+
     if (tokenReady) {
       fetchLastConsumedRecipes();
       fetchFavoriteRecipes();
     }
   }, [tokenReady]);
 
-  const toggleFavorite = async (recipeId) => {
-    const isFavorite = favoriteRecipes.some(
-      (recipe) => recipe.recipe_id === recipeId
-    );
+  const toggleFavorite = async (recipe_id) => {
+    const isFavorite = favoriteRecipes.some((recipe) => recipe.recipe_id === recipe_id);
 
     if (isFavorite) {
-      setFavoriteRecipes((prev) =>
-        prev.filter((recipe) => recipe.recipe_id !== recipeId)
-      );
+      // Remove from favorites
+      setFavoriteRecipes((prev) => prev.filter((recipe) => recipe.recipe_id !== recipe_id));
       try {
-        await api.removeRecipeFromFavorites(recipeId);
+        await api.removeRecipeFromFavorites(recipe_id);
       } catch (error) {
-        console.error(
-          `Error removing recipe ${recipeId} from favorites:`,
-          error.message
-        );
+        console.error(`Error removing recipe ${recipe_id} from favorites:`, error.message);
       }
     } else {
-      const recipeToAdd =
-        lastConsumedRecipes.find((recipe) => recipe.recipe_id === recipeId) || {
-          recipe_id: recipeId,
-        };
-      setFavoriteRecipes((prev) => [...prev, recipeToAdd]);
-      try {
-        await api.addRecipeToFavorites(recipeId);
-      } catch (error) {
-        console.error(
-          `Error adding recipe ${recipeId} to favorites:`,
-          error.message
-        );
+      // Add to favorites
+      const recipeToAdd = lastConsumedRecipes.find((recipe) => recipe.recipe_id === recipe_id);
+      if (recipeToAdd) {
+        setFavoriteRecipes((prev) => [...prev, recipeToAdd]);
+        try {
+          await api.addRecipeToFavorites(recipe_id);
+        } catch (error) {
+          console.error(`Error adding recipe ${recipe_id} to favorites:`, error.message);
+        }
+      } else {
+        console.error("Trying to favorite a recipe that doesn't exist in lastConsumedRecipes!");
       }
     }
   };
@@ -142,8 +134,7 @@ export default function RecipiesGenerator() {
         </h1>
 
         <div className="slider&parragraph flex justify-evenly text-[#182F40] mt-[60px]">
-          <div className="flex flex-col justify-between items-center">
-            <ProteinSlider />
+          <div className="flex flex-col justify-center items-center">
             <PurpleButton
               text={loading ? "Buscando recetas..." : "Solicita una receta"}
               onClick={getRecipeHandler}
@@ -164,10 +155,10 @@ export default function RecipiesGenerator() {
             </div>
             {loading ? (
               <DataCardNoG
-              boxWidth={470}
-              leftRowInfo={["Generando Recetas"]}
-              rightRowInfo={[" "]}
-            />
+                boxWidth={470}
+                leftRowInfo={["Generando Recetas"]}
+                rightRowInfo={[" "]}
+              />
             ) : lastConsumedRecipes.length === 0 ? (
               <DataCardNoG
                 boxWidth={470}
@@ -178,19 +169,18 @@ export default function RecipiesGenerator() {
               <DataCardHeart
                 boxWidth={470}
                 rows={lastConsumedRecipes.map((recipe) => ({
-                  recipeId: recipe.recipe_id,
+                  id: recipe._id, // Key and internal use
+                  recipe_id: recipe.recipe_id, // For toggling favorites
                   leftText: `${recipe.title || "Unknown Recipe"} - Calorías: ${
                     recipe.calories || "N/A"
                   }`,
                   rightText: recipe.createdAt
                     ? new Date(recipe.createdAt).toLocaleDateString()
                     : "Invalid Date",
-                  isFavorite: favoriteRecipes.some(
-                    (fav) => fav.recipe_id === recipe.recipe_id
-                  ),
+                  isFavorite: favoriteRecipes.some((fav) => fav.recipe_id === recipe.recipe_id),
                 }))}
-                onToggleFavorite={(recipeId) => {
-                  toggleFavorite(recipeId);
+                onToggleFavorite={(recipe_id) => {
+                  toggleFavorite(recipe_id);
                 }}
               />
             )}
@@ -203,21 +193,22 @@ export default function RecipiesGenerator() {
             </div>
             {loading ? (
               <DataCardNoG
-              boxWidth={470}
-              leftRowInfo={["Generando Recetas"]}
-              rightRowInfo={[" "]}
-            />
+                boxWidth={470}
+                leftRowInfo={["Generando Recetas"]}
+                rightRowInfo={[" "]}
+              />
             ) : favoriteRecipes.length === 0 ? (
               <DataCardNoG
-              boxWidth={470}
-              leftRowInfo={["No tienes recetas favoritas"]}
-              rightRowInfo={[" "]}
-            />
+                boxWidth={470}
+                leftRowInfo={["No tienes recetas favoritas"]}
+                rightRowInfo={[" "]}
+              />
             ) : (
               <DataCardHeart
                 boxWidth={470}
                 rows={favoriteRecipes.map((recipe) => ({
-                  recipeId: recipe.recipe_id,
+                  id: recipe._id,
+                  recipe_id: recipe.recipe_id, // For toggling favorites
                   leftText: `${recipe.title || "Unknown Recipe"} - Calorías: ${
                     recipe.calories || "N/A"
                   }`,
@@ -226,17 +217,28 @@ export default function RecipiesGenerator() {
                     : "Invalid Date",
                   isFavorite: true,
                 }))}
-                onToggleFavorite={(recipeId) => {
-                  toggleFavorite(recipeId);
+                onToggleFavorite={(recipe_id) => {
+                  toggleFavorite(recipe_id);
                 }}
               />
             )}
           </div>
         </div>
-        <img src={ellipseBackground} alt="elipse" className="absolute top-[-35%] left-[-10%] z-[-1]"/>
-        <img src={ellipseBackground} alt="elipse" className="absolute top-[45%] left-[60%] z-[-1]"/>
-        <img src="/images/logo-sin-texto.png" alt="logo" className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]" />
-
+        <img
+          src={ellipseBackground}
+          alt="elipse"
+          className="absolute top-[-35%] left-[-10%] z-[-1]"
+        />
+        <img
+          src={ellipseBackground}
+          alt="elipse"
+          className="absolute top-[45%] left-[60%] z-[-1]"
+        />
+        <img
+          src="/images/logo-sin-texto.png"
+          alt="logo"
+          className="fixed bottom-[20px] right-[20px] w-[60px] h-[60px]"
+        />
       </div>
       <NotificationLogOut />
     </div>
